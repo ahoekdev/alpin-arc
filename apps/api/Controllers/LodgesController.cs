@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Api.Models;
+using Api.Data;
 
 namespace api.Controllers
 {
@@ -8,9 +9,9 @@ namespace api.Controllers
     [ApiController]
     public class LodgesController : ControllerBase
     {
-        private readonly LodgeContext _context;
+        private readonly AppDbContext _context;
 
-        public LodgesController(LodgeContext context)
+        public LodgesController(AppDbContext context)
         {
             _context = context;
         }
