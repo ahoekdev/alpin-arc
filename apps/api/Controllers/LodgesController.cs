@@ -5,7 +5,7 @@ using Api.Data;
 
 namespace api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/lodges")]
     [ApiController]
     public class LodgesController : ControllerBase
     {
