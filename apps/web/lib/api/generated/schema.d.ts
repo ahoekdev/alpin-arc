@@ -4,7 +4,7 @@
  */
 
 export interface paths {
-    "/api/Lodges": {
+    "/api/lodges": {
         parameters: {
             query?: never;
             header?: never;
@@ -68,7 +68,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/Lodges/{id}": {
+    "/api/lodges/{id}": {
         parameters: {
             query?: never;
             header?: never;
@@ -151,6 +151,153 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/stages": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["StageResponseDto"][];
+                        "application/json": components["schemas"]["StageResponseDto"][];
+                        "text/json": components["schemas"]["StageResponseDto"][];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["StageRequestDto"];
+                    "text/json": components["schemas"]["StageRequestDto"];
+                    "application/*+json": components["schemas"]["StageRequestDto"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["StageResponseDto"];
+                        "application/json": components["schemas"]["StageResponseDto"];
+                        "text/json": components["schemas"]["StageResponseDto"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/stages/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: number | string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["StageResponseDto"];
+                        "application/json": components["schemas"]["StageResponseDto"];
+                        "text/json": components["schemas"]["StageResponseDto"];
+                    };
+                };
+            };
+        };
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: number | string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["StageRequestDto"];
+                    "text/json": components["schemas"]["StageRequestDto"];
+                    "application/*+json": components["schemas"]["StageRequestDto"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        post?: never;
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: number | string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -159,6 +306,33 @@ export interface components {
             /** Format: int64 */
             id: number | string;
             name: string;
+            /** Format: date-time */
+            createdAt: string;
+        };
+        LodgeSummaryDto: {
+            /** Format: int64 */
+            id: number | string;
+            name: string;
+        };
+        StageRequestDto: {
+            /** Format: int64 */
+            startLodgeId: number | string;
+            /** Format: int64 */
+            endLodgeId: number | string;
+            /** Format: int32 */
+            durationMinutes: number | string;
+            /** Format: int32 */
+            distanceMeters: number | string;
+        };
+        StageResponseDto: {
+            /** Format: int64 */
+            id: number | string;
+            startLodge: components["schemas"]["LodgeSummaryDto"];
+            endLodge: components["schemas"]["LodgeSummaryDto"];
+            /** Format: int32 */
+            durationMinutes: number | string;
+            /** Format: int32 */
+            distanceMeters: number | string;
             /** Format: date-time */
             createdAt: string;
         };
