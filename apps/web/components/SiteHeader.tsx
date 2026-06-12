@@ -11,6 +11,9 @@ export default function SiteHeader() {
           <li>
             <Link href="/lodges">Lodges</Link>
           </li>
+          <li>
+            <Link href="/stages">Stages</Link>
+          </li>
         </ul>
       </nav>
     </header>
