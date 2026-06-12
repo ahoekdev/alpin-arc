@@ -4,7 +4,7 @@ import type { components } from "./generated/schema";
 type Lodge = components["schemas"]["Lodge"];
 
 export async function getLodges(): Promise<Lodge[]> {
-  const { data, error } = await apiClient.GET("/api/Lodges");
+  const { data, error } = await apiClient.GET("/api/lodges");
 
   if (error || !data) {
     throw new Error("Failed to fetch lodges");
