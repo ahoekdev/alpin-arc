@@ -20,7 +20,7 @@ namespace api.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Lodge>>> GetLodges()
         {
-            return await _context.Lodges.ToListAsync();
+            return await _context.Lodges.OrderBy(l => l.Name).ToListAsync();
         }
 
         // GET: api/Lodges/5
