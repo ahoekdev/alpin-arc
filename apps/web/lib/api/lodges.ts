@@ -1,17 +1,14 @@
-import getApiBaseUrl from "../utils/getApiBaseUrl";
+import apiClient from "./client";
+import type { components } from "./generated/schema";
 
-type Lodge = {
-  id: number;
-  name: string;
-  createdAt: string;
-};
+type Lodge = components["schemas"]["Lodge"];
 
 export async function getLodges(): Promise<Lodge[]> {
-  const response = await fetch(`${getApiBaseUrl()}/api/lodges`);
+  const { data, error } = await apiClient.GET("/api/Lodges");
 
-  if (!response.ok) {
-    throw new Error(`Failed to fetch lodges: ${response.status}`);
+  if (error || !data) {
+    throw new Error("Failed to fetch lodges");
   }
 
-  return response.json();
+  return data;
 }

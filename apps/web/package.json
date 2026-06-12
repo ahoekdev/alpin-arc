@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "generate:api": "openapi-typescript ${API_BASE_URL:-https://localhost:7120}/openapi/v1.json -o lib/api/generated/schema.d.ts",
     "start": "next start",
     "lint": "eslint"
   },
