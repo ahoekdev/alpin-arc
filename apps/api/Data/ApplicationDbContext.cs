@@ -8,8 +8,13 @@ public class AppDbContext : DbContext
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
     public DbSet<Lodge> Lodges => Set<Lodge>();
     public DbSet<Stage> Stages => Set<Stage>();
+    public DbSet<Tour> Tours => Set<Tour>();
+    public DbSet<TourVariant> TourVariants => Set<TourVariant>();
+    public DbSet<TourVariantStage> TourVariantStages => Set<TourVariantStage>();
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.HasPostgresExtension("citext");
+
         modelBuilder.Entity<Lodge>(entity =>
         {
             entity.HasKey(e => e.Id);
@@ -34,6 +39,50 @@ public class AppDbContext : DbContext
             entity.HasOne(e => e.EndLodge)
                 .WithMany()
                 .HasForeignKey(e => e.EndLodgeId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<Tour>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Name).IsRequired().HasMaxLength(200).HasColumnType("citext");
+            entity.Property(e => e.CreatedAt).HasDefaultValueSql("NOW()");
+
+            entity.HasIndex(e => e.Name).IsUnique();
+        });
+
+        modelBuilder.Entity<TourVariant>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Name).IsRequired().HasMaxLength(200).HasColumnType("citext");
+            entity.Property(e => e.CreatedAt).HasDefaultValueSql("NOW()");
+
+            entity.HasIndex(e => new { e.TourId, e.Name }).IsUnique();
+
+            entity.HasOne(e => e.Tour)
+                .WithMany(e => e.Variants)
+                .HasForeignKey(e => e.TourId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<TourVariantStage>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Order).IsRequired();
+            entity.Property(e => e.CreatedAt).HasDefaultValueSql("NOW()");
+            entity.ToTable(t => t.HasCheckConstraint("ck_tour_variant_stages_order_positive", "\"order\" >= 1"));
+
+            entity.HasIndex(e => new { e.TourVariantId, e.Order }).IsUnique();
+            entity.HasIndex(e => e.StageId);
+
+            entity.HasOne(e => e.TourVariant)
+                .WithMany(e => e.Stages)
+                .HasForeignKey(e => e.TourVariantId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.Stage)
+                .WithMany()
+                .HasForeignKey(e => e.StageId)
                 .OnDelete(DeleteBehavior.Restrict);
         });
     }
