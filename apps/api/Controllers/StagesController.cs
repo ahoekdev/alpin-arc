@@ -117,7 +117,15 @@ namespace api.Controllers
 
             _context.Stages.Remove(stage);
 
-            await _context.SaveChangesAsync();
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException exception) when (exception.InnerException is PostgresException postgresException &&
+                postgresException.SqlState == PostgresErrorCodes.ForeignKeyViolation)
+            {
+                return Conflict("Stage is used by a tour variant.");
+            }
 
             return NoContent();
         }
