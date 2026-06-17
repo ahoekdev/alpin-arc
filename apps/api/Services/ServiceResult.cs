@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace Api.Services;
 
 public enum ServiceErrorType
@@ -9,8 +11,16 @@ public enum ServiceErrorType
 
 public sealed record ServiceError(ServiceErrorType Type, string Message);
 
-public sealed record ServiceResult(ServiceError? Error)
+public sealed record ServiceResult
 {
+    private ServiceResult(ServiceError? error)
+    {
+        Error = error;
+    }
+
+    public ServiceError? Error { get; }
+
+    [MemberNotNullWhen(false, nameof(Error))]
     public bool Succeeded => Error is null;
 
     public static ServiceResult Success() => new((ServiceError?)null);
@@ -25,11 +35,29 @@ public sealed record ServiceResult(ServiceError? Error)
         new(new ServiceError(ServiceErrorType.Conflict, message));
 }
 
-public sealed record ServiceResult<T>(T? Value, ServiceError? Error)
+public sealed record ServiceResult<T>
+    where T : notnull
 {
+    private ServiceResult(T? value, ServiceError? error)
+    {
+        Value = value;
+        Error = error;
+    }
+
+    public T? Value { get; }
+
+    public ServiceError? Error { get; }
+
+    [MemberNotNullWhen(true, nameof(Value))]
+    [MemberNotNullWhen(false, nameof(Error))]
     public bool Succeeded => Error is null;
 
-    public static ServiceResult<T> Success(T value) => new(value, null);
+    public static ServiceResult<T> Success(T value)
+    {
+        ArgumentNullException.ThrowIfNull(value);
+
+        return new(value, null);
+    }
 
     public static ServiceResult<T> NotFound(string message) =>
         new(default, new ServiceError(ServiceErrorType.NotFound, message));
