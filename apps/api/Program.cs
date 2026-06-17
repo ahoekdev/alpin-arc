@@ -2,6 +2,7 @@ using Api.Data;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+var seedDemoData = builder.Environment.IsDevelopment();
 
 builder.Services.AddControllers();
 builder.Services.AddOpenApi(options =>
@@ -20,7 +21,21 @@ builder.Services.AddOpenApi(options =>
 builder.Services.AddDbContext<AppDbContext>(
     opt => opt.UseNpgsql(
         builder.Configuration.GetConnectionString("Postgres"))
-    .UseSnakeCaseNamingConvention());
+    .UseSnakeCaseNamingConvention()
+    .UseSeeding((context, created) =>
+    {
+        if (seedDemoData)
+        {
+            DemoDataSeeder.Seed(context, created);
+        }
+    })
+    .UseAsyncSeeding(async (context, created, cancellationToken) =>
+    {
+        if (seedDemoData)
+        {
+            await DemoDataSeeder.SeedAsync(context, created, cancellationToken);
+        }
+    }));
 
 var app = builder.Build();
 
