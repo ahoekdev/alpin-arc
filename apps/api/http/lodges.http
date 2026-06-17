@@ -1,0 +1,35 @@
+@api_HostAddress = http://localhost:5108
+@lodgeId = 1
+
+
+GET {{api_HostAddress}}/api/lodges
+Accept: application/json
+
+###
+
+GET {{api_HostAddress}}/api/lodges/{{lodgeId}}
+Accept: application/json
+
+###
+
+POST {{api_HostAddress}}/api/lodges
+Content-Type: application/json
+
+{
+  "name": "Berliner Hutte"
+}
+
+###
+
+PUT {{api_HostAddress}}/api/lodges/{{lodgeId}}
+Content-Type: application/json
+
+{
+  "id": {{lodgeId}},
+  "name": "Berliner Hutte",
+  "createdAt": "2026-06-17T00:00:00Z"
+}
+
+###
+
+DELETE {{api_HostAddress}}/api/lodges/{{lodgeId}}

@@ -1,0 +1,38 @@
+@api_HostAddress = http://localhost:5108
+@tourId = 1
+
+
+GET {{api_HostAddress}}/api/tours
+Accept: application/json
+
+###
+
+GET {{api_HostAddress}}/api/tours/{{tourId}}
+Accept: application/json
+
+###
+
+POST {{api_HostAddress}}/api/tours
+Content-Type: application/json
+
+{
+  "name": "Haute Route"
+}
+
+###
+
+PUT {{api_HostAddress}}/api/tours/{{tourId}}
+Content-Type: application/json
+
+{
+  "name": "Haute Route"
+}
+
+###
+
+DELETE {{api_HostAddress}}/api/tours/{{tourId}}
+
+###
+
+GET {{api_HostAddress}}/api/tours/{{tourId}}/variants
+Accept: application/json

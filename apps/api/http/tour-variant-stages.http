@@ -1,0 +1,34 @@
+@api_HostAddress = http://localhost:5108
+@tourVariantStageId = 1
+@tourVariantId = 1
+@stageId = 1
+
+
+GET {{api_HostAddress}}/api/tour-variants/{{tourVariantId}}/stages
+Accept: application/json
+
+###
+
+POST {{api_HostAddress}}/api/tour-variant-stages
+Content-Type: application/json
+
+{
+  "tourVariantId": {{tourVariantId}},
+  "stageId": {{stageId}},
+  "order": 1
+}
+
+###
+
+PUT {{api_HostAddress}}/api/tour-variant-stages/{{tourVariantStageId}}
+Content-Type: application/json
+
+{
+  "tourVariantId": {{tourVariantId}},
+  "stageId": {{stageId}},
+  "order": 2
+}
+
+###
+
+DELETE {{api_HostAddress}}/api/tour-variant-stages/{{tourVariantStageId}}
