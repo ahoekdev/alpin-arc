@@ -7,14 +7,9 @@ namespace api.Controllers
 {
     [Route("api/lodges")]
     [ApiController]
-    public class LodgesController : ControllerBase
+    public class LodgesController(AppDbContext context) : ControllerBase
     {
-        private readonly AppDbContext _context;
-
-        public LodgesController(AppDbContext context)
-        {
-            _context = context;
-        }
+        private readonly AppDbContext _context = context;
 
         // GET: api/Lodges
         [HttpGet]

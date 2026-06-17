@@ -9,14 +9,9 @@ namespace api.Controllers
 {
     [Route("api/tour-variants")]
     [ApiController]
-    public class TourVariantsController : ControllerBase
+    public class TourVariantsController(AppDbContext context) : ControllerBase
     {
-        private readonly AppDbContext _context;
-
-        public TourVariantsController(AppDbContext context)
-        {
-            _context = context;
-        }
+        private readonly AppDbContext _context = context;
 
         [HttpGet("{id}")]
         public async Task<ActionResult<TourVariantResponseDto>> GetTourVariant(long id, CancellationToken cancellationToken)

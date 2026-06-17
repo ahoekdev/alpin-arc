@@ -9,14 +9,9 @@ namespace api.Controllers
 {
     [Route("api/tour-variant-stages")]
     [ApiController]
-    public class TourVariantStagesController : ControllerBase
+    public class TourVariantStagesController(AppDbContext context) : ControllerBase
     {
-        private readonly AppDbContext _context;
-
-        public TourVariantStagesController(AppDbContext context)
-        {
-            _context = context;
-        }
+        private readonly AppDbContext _context = context;
 
         [HttpPut("{id}")]
         public async Task<IActionResult> PutTourVariantStage(long id, TourVariantStageRequestDto request, CancellationToken cancellationToken)

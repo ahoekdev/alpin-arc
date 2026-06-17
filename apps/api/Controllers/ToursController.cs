@@ -9,14 +9,9 @@ namespace api.Controllers
 {
     [Route("api/tours")]
     [ApiController]
-    public class ToursController : ControllerBase
+    public class ToursController(AppDbContext context) : ControllerBase
     {
-        private readonly AppDbContext _context;
-
-        public ToursController(AppDbContext context)
-        {
-            _context = context;
-        }
+        private readonly AppDbContext _context = context;
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<TourResponseDto>>> GetTours(CancellationToken cancellationToken)

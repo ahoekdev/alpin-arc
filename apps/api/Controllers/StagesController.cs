@@ -9,14 +9,9 @@ namespace api.Controllers
 {
     [Route("api/stages")]
     [ApiController]
-    public class StagesController : ControllerBase
+    public class StagesController(AppDbContext context) : ControllerBase
     {
-        private readonly AppDbContext _context;
-
-        public StagesController(AppDbContext context)
-        {
-            _context = context;
-        }
+        private readonly AppDbContext _context = context;
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<StageResponseDto>>> GetStages()
