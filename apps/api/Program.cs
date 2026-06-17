@@ -11,7 +11,7 @@ builder.Services.AddOpenApi(options =>
 {
     options.AddSchemaTransformer((schema, context, cancellationToken) =>
     {
-        if (context.JsonTypeInfo.Type == typeof(Api.Models.Lodge))
+        if (context.JsonTypeInfo.Type == typeof(Api.Dtos.LodgeResponseDto))
         {
             schema.Required = new HashSet<string> { "id", "name", "createdAt" };
         }

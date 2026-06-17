@@ -32,6 +32,11 @@ namespace api.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutLodge(long id, LodgeRequestDto request, CancellationToken cancellationToken)
         {
+            if (request.Id.HasValue && request.Id.Value != id)
+            {
+                return BadRequest();
+            }
+
             var result = await _lodgeService.UpdateLodgeAsync(id, request, cancellationToken);
 
             return MapResult(result);
