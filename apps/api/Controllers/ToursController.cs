@@ -30,8 +30,10 @@ namespace api.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<TourResponseDto>> GetTour(long id, CancellationToken cancellationToken)
         {
-            var tour = await TourResponseQuery()
-                .FirstOrDefaultAsync(t => t.Id == id, cancellationToken);
+            var tour = await _context.Tours
+                .Where(t => t.Id == id)
+                .Select(t => new TourResponseDto(t.Id, t.Name, t.CreatedAt))
+                .FirstOrDefaultAsync(cancellationToken);
 
             if (tour == null)
             {
@@ -105,8 +107,10 @@ namespace api.Controllers
                 return result;
             }
 
-            var response = await TourResponseQuery()
-                .FirstAsync(savedTour => savedTour.Id == tour.Id, cancellationToken);
+            var response = await _context.Tours
+                .Where(savedTour => savedTour.Id == tour.Id)
+                .Select(savedTour => new TourResponseDto(savedTour.Id, savedTour.Name, savedTour.CreatedAt))
+                .FirstAsync(cancellationToken);
 
             return CreatedAtAction(nameof(GetTour), new { id = tour.Id }, response);
         }
@@ -125,14 +129,6 @@ namespace api.Controllers
             await _context.SaveChangesAsync(cancellationToken);
 
             return NoContent();
-        }
-
-        private IQueryable<TourResponseDto> TourResponseQuery()
-        {
-            return _context.Tours.Select(tour => new TourResponseDto(
-                tour.Id,
-                tour.Name,
-                tour.CreatedAt));
         }
 
         private ActionResult HandleDatabaseException(PostgresException exception)

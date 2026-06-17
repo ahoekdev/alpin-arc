@@ -65,8 +65,24 @@ namespace api.Controllers
                 return result;
             }
 
-            var response = await TourVariantStageResponseQuery()
-                .FirstAsync(savedTourVariantStage => savedTourVariantStage.Id == tourVariantStage.Id, cancellationToken);
+            var response = await _context.TourVariantStages
+                .Where(savedTourVariantStage => savedTourVariantStage.Id == tourVariantStage.Id)
+                .Select(savedTourVariantStage => new TourVariantStageResponseDto(
+                    savedTourVariantStage.Id,
+                    new TourVariantSummaryDto(
+                        savedTourVariantStage.TourVariant.Id,
+                        savedTourVariantStage.TourVariant.TourId,
+                        savedTourVariantStage.TourVariant.Name),
+                    new StageResponseDto(
+                        savedTourVariantStage.Stage.Id,
+                        new LodgeSummaryDto(savedTourVariantStage.Stage.StartLodge.Id, savedTourVariantStage.Stage.StartLodge.Name),
+                        new LodgeSummaryDto(savedTourVariantStage.Stage.EndLodge.Id, savedTourVariantStage.Stage.EndLodge.Name),
+                        savedTourVariantStage.Stage.DurationMinutes,
+                        savedTourVariantStage.Stage.DistanceMeters,
+                        savedTourVariantStage.Stage.CreatedAt),
+                    savedTourVariantStage.Order,
+                    savedTourVariantStage.CreatedAt))
+                .FirstAsync(cancellationToken);
 
             return Created($"/api/tour-variants/{tourVariantStage.TourVariantId}/stages", response);
         }
@@ -85,25 +101,6 @@ namespace api.Controllers
             await _context.SaveChangesAsync(cancellationToken);
 
             return NoContent();
-        }
-
-        private IQueryable<TourVariantStageResponseDto> TourVariantStageResponseQuery()
-        {
-            return _context.TourVariantStages.Select(tourVariantStage => new TourVariantStageResponseDto(
-                tourVariantStage.Id,
-                new TourVariantSummaryDto(
-                    tourVariantStage.TourVariant.Id,
-                    tourVariantStage.TourVariant.TourId,
-                    tourVariantStage.TourVariant.Name),
-                new StageResponseDto(
-                    tourVariantStage.Stage.Id,
-                    new LodgeSummaryDto(tourVariantStage.Stage.StartLodge.Id, tourVariantStage.Stage.StartLodge.Name),
-                    new LodgeSummaryDto(tourVariantStage.Stage.EndLodge.Id, tourVariantStage.Stage.EndLodge.Name),
-                    tourVariantStage.Stage.DurationMinutes,
-                    tourVariantStage.Stage.DistanceMeters,
-                    tourVariantStage.Stage.CreatedAt),
-                tourVariantStage.Order,
-                tourVariantStage.CreatedAt));
         }
 
         private ActionResult HandleDatabaseException(PostgresException exception)

@@ -21,8 +21,14 @@ namespace api.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<TourVariantResponseDto>> GetTourVariant(long id, CancellationToken cancellationToken)
         {
-            var tourVariant = await TourVariantResponseQuery()
-                .FirstOrDefaultAsync(v => v.Id == id, cancellationToken);
+            var tourVariant = await _context.TourVariants
+                .Where(v => v.Id == id)
+                .Select(v => new TourVariantResponseDto(
+                    v.Id,
+                    new TourSummaryDto(v.Tour.Id, v.Tour.Name),
+                    v.Name,
+                    v.CreatedAt))
+                .FirstOrDefaultAsync(cancellationToken);
 
             if (tourVariant == null)
             {
@@ -42,9 +48,24 @@ namespace api.Controllers
                 return NotFound();
             }
 
-            return await TourVariantStageResponseQuery()
-                .Where(s => s.TourVariant.Id == id)
+            return await _context.TourVariantStages
+                .Where(s => s.TourVariantId == id)
                 .OrderBy(s => s.Order)
+                .Select(s => new TourVariantStageResponseDto(
+                    s.Id,
+                    new TourVariantSummaryDto(
+                        s.TourVariant.Id,
+                        s.TourVariant.TourId,
+                        s.TourVariant.Name),
+                    new StageResponseDto(
+                        s.Stage.Id,
+                        new LodgeSummaryDto(s.Stage.StartLodge.Id, s.Stage.StartLodge.Name),
+                        new LodgeSummaryDto(s.Stage.EndLodge.Id, s.Stage.EndLodge.Name),
+                        s.Stage.DurationMinutes,
+                        s.Stage.DistanceMeters,
+                        s.Stage.CreatedAt),
+                    s.Order,
+                    s.CreatedAt))
                 .ToListAsync(cancellationToken);
         }
 
@@ -93,8 +114,14 @@ namespace api.Controllers
                 return result;
             }
 
-            var response = await TourVariantResponseQuery()
-                .FirstAsync(savedTourVariant => savedTourVariant.Id == tourVariant.Id, cancellationToken);
+            var response = await _context.TourVariants
+                .Where(savedTourVariant => savedTourVariant.Id == tourVariant.Id)
+                .Select(savedTourVariant => new TourVariantResponseDto(
+                    savedTourVariant.Id,
+                    new TourSummaryDto(savedTourVariant.Tour.Id, savedTourVariant.Tour.Name),
+                    savedTourVariant.Name,
+                    savedTourVariant.CreatedAt))
+                .FirstAsync(cancellationToken);
 
             return CreatedAtAction(nameof(GetTourVariant), new { id = tourVariant.Id }, response);
         }
@@ -113,34 +140,6 @@ namespace api.Controllers
             await _context.SaveChangesAsync(cancellationToken);
 
             return NoContent();
-        }
-
-        private IQueryable<TourVariantResponseDto> TourVariantResponseQuery()
-        {
-            return _context.TourVariants.Select(tourVariant => new TourVariantResponseDto(
-                tourVariant.Id,
-                new TourSummaryDto(tourVariant.Tour.Id, tourVariant.Tour.Name),
-                tourVariant.Name,
-                tourVariant.CreatedAt));
-        }
-
-        private IQueryable<TourVariantStageResponseDto> TourVariantStageResponseQuery()
-        {
-            return _context.TourVariantStages.Select(tourVariantStage => new TourVariantStageResponseDto(
-                tourVariantStage.Id,
-                new TourVariantSummaryDto(
-                    tourVariantStage.TourVariant.Id,
-                    tourVariantStage.TourVariant.TourId,
-                    tourVariantStage.TourVariant.Name),
-                new StageResponseDto(
-                    tourVariantStage.Stage.Id,
-                    new LodgeSummaryDto(tourVariantStage.Stage.StartLodge.Id, tourVariantStage.Stage.StartLodge.Name),
-                    new LodgeSummaryDto(tourVariantStage.Stage.EndLodge.Id, tourVariantStage.Stage.EndLodge.Name),
-                    tourVariantStage.Stage.DurationMinutes,
-                    tourVariantStage.Stage.DistanceMeters,
-                    tourVariantStage.Stage.CreatedAt),
-                tourVariantStage.Order,
-                tourVariantStage.CreatedAt));
         }
 
         private ActionResult HandleDatabaseException(PostgresException exception)
