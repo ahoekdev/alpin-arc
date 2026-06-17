@@ -23,11 +23,18 @@ namespace api.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<TourResponseDto>> GetTour(long id, CancellationToken cancellationToken)
+        public async Task<ActionResult<TourDetailResponseDto>> GetTour(long id, CancellationToken cancellationToken)
         {
             var tour = await _context.Tours
                 .Where(t => t.Id == id)
-                .Select(t => new TourResponseDto(t.Id, t.Name, t.CreatedAt))
+                .Select(t => new TourDetailResponseDto(
+                    t.Id,
+                    t.Name,
+                    t.CreatedAt,
+                    t.Variants
+                        .OrderBy(v => v.Name)
+                        .Select(v => new TourVariantSummaryDto(v.Id, v.TourId, v.Name))
+                        .ToList()))
                 .FirstOrDefaultAsync(cancellationToken);
 
             if (tour == null)

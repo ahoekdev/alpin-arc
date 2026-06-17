@@ -14,4 +14,10 @@ public record TourResponseDto(
     string Name,
     DateTime CreatedAt);
 
+public record TourDetailResponseDto(
+    long Id,
+    string Name,
+    DateTime CreatedAt,
+    IReadOnlyCollection<TourVariantSummaryDto> Variants);
+
 public record TourSummaryDto(long Id, string Name);
