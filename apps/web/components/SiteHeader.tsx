@@ -9,10 +9,10 @@ export default function SiteHeader() {
             <Link href="/">Home</Link>
           </li>
           <li>
-            <Link href="/lodges">Lodges</Link>
+            <Link href="/explore">Explore</Link>
           </li>
           <li>
-            <Link href="/stages">Stages</Link>
+            <Link href="/tours">Tours</Link>
           </li>
         </ul>
       </nav>
