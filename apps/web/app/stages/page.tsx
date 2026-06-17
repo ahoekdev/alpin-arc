@@ -1,12 +1,13 @@
 import Link from "next/link";
 
 import { getStages } from "@/lib/api/stages";
+import { PageContainer } from "@/components/PageContainer";
 
 export default async function Stages() {
   const stages = await getStages();
 
   return (
-    <div className="container mx-auto px-4">
+    <PageContainer>
       <h1>Stages</h1>
       {stages.length === 0 ? (
         <p>No stages found.</p>
@@ -22,6 +23,6 @@ export default async function Stages() {
           ))}
         </ul>
       )}
-    </div>
+    </PageContainer>
   );
 }

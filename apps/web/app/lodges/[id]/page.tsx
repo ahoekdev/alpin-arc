@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 
 import { getLodge } from "@/lib/api/lodges";
+import { PageContainer } from "@/components/PageContainer";
 
 type LodgePageProps = {
   params: Promise<{
@@ -17,12 +18,12 @@ export default async function Lodge({ params }: LodgePageProps) {
   }
 
   return (
-    <div className="container mx-auto px-4">
+    <PageContainer>
       <h1>{lodge.name}</h1>
       <ul>
         <li>Id: {lodge.id}</li>
         <li>Created at: {lodge.createdAt}</li>
       </ul>
-    </div>
+    </PageContainer>
   );
 }

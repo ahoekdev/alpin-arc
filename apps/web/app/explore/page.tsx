@@ -3,6 +3,7 @@ import Link from "next/link";
 import { getLodges } from "@/lib/api/lodges";
 import { getStages } from "@/lib/api/stages";
 import { getTours } from "@/lib/api/tours";
+import { PageContainer } from "@/components/PageContainer";
 
 export default async function Explore() {
   const [lodges, stages, tours] = await Promise.all([
@@ -12,7 +13,7 @@ export default async function Explore() {
   ]);
 
   return (
-    <div className="container mx-auto px-4">
+    <PageContainer>
       <h1>Explore</h1>
 
       <section>
@@ -65,6 +66,6 @@ export default async function Explore() {
         )}
         <Link href="/tours">View all tours</Link>
       </section>
-    </div>
+    </PageContainer>
   );
 }

@@ -1,7 +1,9 @@
+import { PageContainer } from "@/components/PageContainer";
+
 export default function Home() {
   return (
-    <div className="container mx-auto px-4">
+    <PageContainer>
       <h1>Welcome to AlpinArc</h1>
-    </div>
+    </PageContainer>
   );
 }

@@ -1,12 +1,13 @@
 import Link from "next/link";
 
 import { getTours } from "@/lib/api/tours";
+import { PageContainer } from "@/components/PageContainer";
 
 export default async function Tours() {
   const tours = await getTours();
 
   return (
-    <div className="container mx-auto px-4">
+    <PageContainer>
       <h1>Tours</h1>
       {tours.length === 0 ? (
         <p>No tours found.</p>
@@ -19,6 +20,6 @@ export default async function Tours() {
           ))}
         </ul>
       )}
-    </div>
+    </PageContainer>
   );
 }

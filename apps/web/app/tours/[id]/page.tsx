@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { getTour } from "@/lib/api/tours";
+import { PageContainer } from "@/components/PageContainer";
 
 type TourPageProps = {
   params: Promise<{
@@ -18,7 +19,7 @@ export default async function Tour({ params }: TourPageProps) {
   }
 
   return (
-    <div className="container mx-auto px-4">
+    <PageContainer>
       <h1>{tour.name}</h1>
       <ul>
         <li>Id: {tour.id}</li>
@@ -39,6 +40,6 @@ export default async function Tour({ params }: TourPageProps) {
           ))}
         </ul>
       )}
-    </div>
+    </PageContainer>
   );
 }

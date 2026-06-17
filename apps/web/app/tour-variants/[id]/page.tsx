@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { getTourVariant } from "@/lib/api/tourVariants";
+import { PageContainer } from "@/components/PageContainer";
 
 type TourVariantPageProps = {
   params: Promise<{
@@ -18,7 +19,7 @@ export default async function TourVariant({ params }: TourVariantPageProps) {
   }
 
   return (
-    <div className="container mx-auto px-4">
+    <PageContainer>
       <h1>{variant.name}</h1>
       <ul>
         <li>Id: {variant.id}</li>
@@ -46,6 +47,6 @@ export default async function TourVariant({ params }: TourVariantPageProps) {
           ))}
         </ul>
       )}
-    </div>
+    </PageContainer>
   );
 }

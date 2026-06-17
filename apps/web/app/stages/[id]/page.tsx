@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 
 import { getStage } from "@/lib/api/stages";
+import { PageContainer } from "@/components/PageContainer";
 
 type StagePageProps = {
   params: Promise<{
@@ -17,7 +18,7 @@ export default async function Stage({ params }: StagePageProps) {
   }
 
   return (
-    <div className="container mx-auto px-4">
+    <PageContainer>
       <h1>
         {stage.startLodge.name} -&gt; {stage.endLodge.name}
       </h1>
@@ -29,6 +30,6 @@ export default async function Stage({ params }: StagePageProps) {
         <li>Distance: {stage.distanceMeters} m</li>
         <li>Created at: {stage.createdAt}</li>
       </ul>
-    </div>
+    </PageContainer>
   );
 }

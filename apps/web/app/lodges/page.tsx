@@ -1,12 +1,13 @@
 import Link from "next/link";
 
 import { getLodges } from "@/lib/api/lodges";
+import { PageContainer } from "@/components/PageContainer";
 
 export default async function Lodges() {
   const lodges = await getLodges();
 
   return (
-    <div className="container mx-auto px-4">
+    <PageContainer>
       <h1>Lodges</h1>
       {lodges.length === 0 ? (
         <p>No lodges found.</p>
@@ -19,6 +20,6 @@ export default async function Lodges() {
           ))}
         </ul>
       )}
-    </div>
+    </PageContainer>
   );
 }
