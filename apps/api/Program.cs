@@ -8,6 +8,7 @@ var seedDemoData = builder.Environment.IsDevelopment();
 builder.Services.AddControllers();
 builder.Services.AddScoped<ILodgeService, LodgeService>();
 builder.Services.AddScoped<IStageService, StageService>();
+builder.Services.AddScoped<ITourService, TourService>();
 builder.Services.AddOpenApi(options =>
 {
     options.AddSchemaTransformer((schema, context, cancellationToken) =>

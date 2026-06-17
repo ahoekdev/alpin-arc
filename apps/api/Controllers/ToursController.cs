@@ -1,174 +1,98 @@
-using Api.Data;
 using Api.Dtos;
-using Api.Models;
+using Api.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Npgsql;
 
 namespace api.Controllers
 {
     [Route("api/tours")]
     [ApiController]
-    public class ToursController(AppDbContext context) : ControllerBase
+    public class ToursController(ITourService tourService) : ControllerBase
     {
-        private readonly AppDbContext _context = context;
+        private readonly ITourService _tourService = tourService;
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<TourResponseDto>>> GetTours([FromQuery] int? limit, CancellationToken cancellationToken)
+        public async Task<ActionResult<IReadOnlyCollection<TourResponseDto>>> GetTours([FromQuery] int? limit, CancellationToken cancellationToken)
         {
-            if (limit is <= 0 or > 100)
-            {
-                return BadRequest("Limit must be between 1 and 100.");
-            }
+            var result = await _tourService.GetToursAsync(limit, cancellationToken);
 
-            var query = _context.Tours
-                .OrderBy(t => t.Name)
-                .Select(t => new TourResponseDto(t.Id, t.Name, t.CreatedAt));
-
-            if (limit.HasValue)
-            {
-                query = query.Take(limit.Value);
-            }
-
-            return await query.ToListAsync(cancellationToken);
+            return MapResult(result);
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<TourDetailResponseDto>> GetTour(long id, CancellationToken cancellationToken)
         {
-            var tour = await _context.Tours
-                .Where(t => t.Id == id)
-                .Select(t => new TourDetailResponseDto(
-                    t.Id,
-                    t.Name,
-                    t.CreatedAt,
-                    t.Variants
-                        .OrderBy(v => v.Name)
-                        .Select(v => new TourDetailVariantDto(
-                            v.Id,
-                            v.TourId,
-                            v.Name,
-                            v.Stages.Sum(s => s.Stage.DistanceMeters),
-                            v.Stages.Sum(s => s.Stage.DurationMinutes),
-                            v.Stages.Count))
-                        .ToList()))
-                .FirstOrDefaultAsync(cancellationToken);
+            var result = await _tourService.GetTourAsync(id, cancellationToken);
 
-            if (tour == null)
-            {
-                return NotFound();
-            }
-
-            return tour;
+            return MapResult(result);
         }
 
         [HttpGet("{id}/variants")]
-        public async Task<ActionResult<IEnumerable<TourVariantResponseDto>>> GetTourVariants(long id, CancellationToken cancellationToken)
+        public async Task<ActionResult<IReadOnlyCollection<TourVariantResponseDto>>> GetTourVariants(long id, CancellationToken cancellationToken)
         {
-            var tourExists = await _context.Tours.AnyAsync(t => t.Id == id, cancellationToken);
+            var result = await _tourService.GetTourVariantsAsync(id, cancellationToken);
 
-            if (!tourExists)
-            {
-                return NotFound();
-            }
-
-            return await _context.TourVariants
-                .Where(v => v.TourId == id)
-                .OrderBy(v => v.Name)
-                .Select(v => new TourVariantResponseDto(
-                    v.Id,
-                    new TourSummaryDto(v.Tour.Id, v.Tour.Name),
-                    v.Name,
-                    v.CreatedAt))
-                .ToListAsync(cancellationToken);
+            return MapResult(result);
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> PutTour(long id, TourRequestDto request, CancellationToken cancellationToken)
         {
-            var tour = await _context.Tours.FindAsync([id], cancellationToken);
+            var result = await _tourService.UpdateTourAsync(id, request, cancellationToken);
 
-            if (tour == null)
-            {
-                return NotFound();
-            }
-
-            tour.Name = request.Name;
-
-            try
-            {
-                await _context.SaveChangesAsync(cancellationToken);
-            }
-            catch (DbUpdateException exception) when (TryHandleDatabaseException(exception, out var result))
-            {
-                return result;
-            }
-
-            return NoContent();
+            return MapResult(result);
         }
 
         [HttpPost]
         public async Task<ActionResult<TourResponseDto>> PostTour(TourRequestDto request, CancellationToken cancellationToken)
         {
-            var tour = new Tour
-            {
-                Name = request.Name,
-            };
+            var result = await _tourService.CreateTourAsync(request, cancellationToken);
 
-            _context.Tours.Add(tour);
-
-            try
+            if (result.Succeeded)
             {
-                await _context.SaveChangesAsync(cancellationToken);
-            }
-            catch (DbUpdateException exception) when (TryHandleDatabaseException(exception, out var result))
-            {
-                return result;
+                return CreatedAtAction(nameof(GetTour), new { id = result.Value.Id }, result.Value);
             }
 
-            var response = await _context.Tours
-                .Where(savedTour => savedTour.Id == tour.Id)
-                .Select(savedTour => new TourResponseDto(savedTour.Id, savedTour.Name, savedTour.CreatedAt))
-                .FirstAsync(cancellationToken);
-
-            return CreatedAtAction(nameof(GetTour), new { id = tour.Id }, response);
+            return MapResult(result);
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTour(long id, CancellationToken cancellationToken)
         {
-            var tour = await _context.Tours.FindAsync([id], cancellationToken);
+            var result = await _tourService.DeleteTourAsync(id, cancellationToken);
 
-            if (tour == null)
-            {
-                return NotFound();
-            }
-
-            _context.Tours.Remove(tour);
-            await _context.SaveChangesAsync(cancellationToken);
-
-            return NoContent();
+            return MapResult(result);
         }
 
-        private ActionResult HandleDatabaseException(PostgresException exception)
+        private ActionResult<T> MapResult<T>(ServiceResult<T> result)
+            where T : notnull
         {
-            return exception.SqlState switch
+            if (result.Succeeded)
             {
-                PostgresErrorCodes.UniqueViolation => Conflict("A tour with the same name already exists."),
-                _ => throw exception,
+                return result.Value;
+            }
+
+            return MapError(result.Error);
+        }
+
+        private IActionResult MapResult(ServiceResult result)
+        {
+            if (result.Succeeded)
+            {
+                return NoContent();
+            }
+
+            return MapError(result.Error);
+        }
+
+        private ActionResult MapError(ServiceError? error)
+        {
+            return error?.Type switch
+            {
+                ServiceErrorType.NotFound => NotFound(),
+                ServiceErrorType.BadRequest => BadRequest(error.Message),
+                ServiceErrorType.Conflict => Conflict(error.Message),
+                _ => StatusCode(500),
             };
-        }
-
-        private bool TryHandleDatabaseException(DbUpdateException exception, out ActionResult result)
-        {
-            if (exception.InnerException is PostgresException postgresException)
-            {
-                result = HandleDatabaseException(postgresException);
-                return true;
-            }
-
-            result = new StatusCodeResult(StatusCodes.Status500InternalServerError);
-            return false;
         }
     }
 }
