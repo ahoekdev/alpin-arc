@@ -16,7 +16,7 @@ namespace api.Controllers
         {
             var result = await _lodgeService.GetLodgesAsync(limit, cancellationToken);
 
-            return MapResult(result);
+            return this.ToActionResult(result);
         }
 
         // GET: api/Lodges/5
@@ -25,7 +25,7 @@ namespace api.Controllers
         {
             var result = await _lodgeService.GetLodgeAsync(id, cancellationToken);
 
-            return MapResult(result);
+            return this.ToActionResult(result);
         }
 
         // PUT: api/Lodges/5
@@ -39,7 +39,7 @@ namespace api.Controllers
 
             var result = await _lodgeService.UpdateLodgeAsync(id, request, cancellationToken);
 
-            return MapResult(result);
+            return this.ToNoContentActionResult(result);
         }
 
         // POST: api/Lodges
@@ -53,7 +53,7 @@ namespace api.Controllers
                 return CreatedAtAction(nameof(GetLodge), new { id = result.Value.Id }, result.Value);
             }
 
-            return MapResult(result);
+            return this.ToActionResult(result);
         }
 
         // DELETE: api/Lodges/5
@@ -62,39 +62,7 @@ namespace api.Controllers
         {
             var result = await _lodgeService.DeleteLodgeAsync(id, cancellationToken);
 
-            return MapResult(result);
-        }
-
-        private ActionResult<T> MapResult<T>(ServiceResult<T> result)
-            where T : notnull
-        {
-            if (result.Succeeded)
-            {
-                return result.Value;
-            }
-
-            return MapError(result.Error);
-        }
-
-        private IActionResult MapResult(ServiceResult result)
-        {
-            if (result.Succeeded)
-            {
-                return NoContent();
-            }
-
-            return MapError(result.Error);
-        }
-
-        private ActionResult MapError(ServiceError? error)
-        {
-            return error?.Type switch
-            {
-                ServiceErrorType.NotFound => NotFound(),
-                ServiceErrorType.BadRequest => BadRequest(error.Message),
-                ServiceErrorType.Conflict => Conflict(error.Message),
-                _ => StatusCode(500),
-            };
+            return this.ToNoContentActionResult(result);
         }
     }
 }
