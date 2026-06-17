@@ -22,3 +22,10 @@ public record TourVariantSummaryDto(
     long Id,
     long TourId,
     string Name);
+
+public record TourVariantDetailResponseDto(
+    long Id,
+    TourSummaryDto Tour,
+    string Name,
+    DateTime CreatedAt,
+    IReadOnlyCollection<TourVariantStageResponseDto> Stages);

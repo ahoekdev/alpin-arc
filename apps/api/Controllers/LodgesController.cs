@@ -13,9 +13,21 @@ namespace api.Controllers
 
         // GET: api/Lodges
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Lodge>>> GetLodges()
+        public async Task<ActionResult<IEnumerable<Lodge>>> GetLodges([FromQuery] int? limit)
         {
-            return await _context.Lodges.OrderBy(l => l.Name).ToListAsync();
+            if (limit is <= 0 or > 100)
+            {
+                return BadRequest("Limit must be between 1 and 100.");
+            }
+
+            IQueryable<Lodge> query = _context.Lodges.OrderBy(l => l.Name);
+
+            if (limit.HasValue)
+            {
+                query = query.Take(limit.Value);
+            }
+
+            return await query.ToListAsync();
         }
 
         // GET: api/Lodges/5

@@ -14,9 +14,14 @@ namespace api.Controllers
         private readonly AppDbContext _context = context;
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<StageResponseDto>>> GetStages()
+        public async Task<ActionResult<IEnumerable<StageResponseDto>>> GetStages([FromQuery] int? limit)
         {
-            return await _context.Stages
+            if (limit is <= 0 or > 100)
+            {
+                return BadRequest("Limit must be between 1 and 100.");
+            }
+
+            var query = _context.Stages
                 .OrderBy(s => s.StartLodge.Name)
                 .ThenBy(s => s.EndLodge.Name)
                 .Select(s => new StageResponseDto(
@@ -25,15 +30,29 @@ namespace api.Controllers
                     new LodgeSummaryDto(s.EndLodge.Id, s.EndLodge.Name),
                     s.DurationMinutes,
                     s.DistanceMeters,
-                    s.CreatedAt))
-                .ToListAsync();
+                    s.CreatedAt));
+
+            if (limit.HasValue)
+            {
+                query = query.Take(limit.Value);
+            }
+
+            return await query.ToListAsync();
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<StageResponseDto>> GetStage(long id)
         {
-            var stage = await StageResponseQuery()
-                .FirstOrDefaultAsync(s => s.Id == id);
+            var stage = await _context.Stages
+                .Where(stage => stage.Id == id)
+                .Select(stage => new StageResponseDto(
+                    stage.Id,
+                    new LodgeSummaryDto(stage.StartLodge.Id, stage.StartLodge.Name),
+                    new LodgeSummaryDto(stage.EndLodge.Id, stage.EndLodge.Name),
+                    stage.DurationMinutes,
+                    stage.DistanceMeters,
+                    stage.CreatedAt))
+                .FirstOrDefaultAsync();
 
             if (stage == null)
             {

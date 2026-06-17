@@ -14,15 +14,33 @@ namespace api.Controllers
         private readonly AppDbContext _context = context;
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<TourVariantResponseDto>> GetTourVariant(long id, CancellationToken cancellationToken)
+        public async Task<ActionResult<TourVariantDetailResponseDto>> GetTourVariant(long id, CancellationToken cancellationToken)
         {
             var tourVariant = await _context.TourVariants
                 .Where(v => v.Id == id)
-                .Select(v => new TourVariantResponseDto(
+                .Select(v => new TourVariantDetailResponseDto(
                     v.Id,
                     new TourSummaryDto(v.Tour.Id, v.Tour.Name),
                     v.Name,
-                    v.CreatedAt))
+                    v.CreatedAt,
+                    v.Stages
+                        .OrderBy(s => s.Order)
+                        .Select(s => new TourVariantStageResponseDto(
+                            s.Id,
+                            new TourVariantSummaryDto(
+                                s.TourVariant.Id,
+                                s.TourVariant.TourId,
+                                s.TourVariant.Name),
+                            new StageResponseDto(
+                                s.Stage.Id,
+                                new LodgeSummaryDto(s.Stage.StartLodge.Id, s.Stage.StartLodge.Name),
+                                new LodgeSummaryDto(s.Stage.EndLodge.Id, s.Stage.EndLodge.Name),
+                                s.Stage.DurationMinutes,
+                                s.Stage.DistanceMeters,
+                                s.Stage.CreatedAt),
+                            s.Order,
+                            s.CreatedAt))
+                        .ToList()))
                 .FirstOrDefaultAsync(cancellationToken);
 
             if (tourVariant == null)

@@ -14,12 +14,23 @@ namespace api.Controllers
         private readonly AppDbContext _context = context;
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<TourResponseDto>>> GetTours(CancellationToken cancellationToken)
+        public async Task<ActionResult<IEnumerable<TourResponseDto>>> GetTours([FromQuery] int? limit, CancellationToken cancellationToken)
         {
-            return await _context.Tours
+            if (limit is <= 0 or > 100)
+            {
+                return BadRequest("Limit must be between 1 and 100.");
+            }
+
+            var query = _context.Tours
                 .OrderBy(t => t.Name)
-                .Select(t => new TourResponseDto(t.Id, t.Name, t.CreatedAt))
-                .ToListAsync(cancellationToken);
+                .Select(t => new TourResponseDto(t.Id, t.Name, t.CreatedAt));
+
+            if (limit.HasValue)
+            {
+                query = query.Take(limit.Value);
+            }
+
+            return await query.ToListAsync(cancellationToken);
         }
 
         [HttpGet("{id}")]
