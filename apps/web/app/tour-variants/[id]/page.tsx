@@ -19,7 +19,7 @@ export default async function TourVariant({ params }: TourVariantPageProps) {
 
   return (
     <div className="container mx-auto px-4">
-      <h1 className="text-3xl font-bold">{variant.name}</h1>
+      <h1>{variant.name}</h1>
       <ul>
         <li>Id: {variant.id}</li>
         <li>

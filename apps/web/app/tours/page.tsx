@@ -7,7 +7,7 @@ export default async function Tours() {
 
   return (
     <div className="container mx-auto px-4">
-      <h1 className="text-3xl font-bold">Tours</h1>
+      <h1>Tours</h1>
       {tours.length === 0 ? (
         <p>No tours found.</p>
       ) : (

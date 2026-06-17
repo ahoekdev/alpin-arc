@@ -18,7 +18,7 @@ export default async function Stage({ params }: StagePageProps) {
 
   return (
     <div className="container mx-auto px-4">
-      <h1 className="text-3xl font-bold">
+      <h1>
         {stage.startLodge.name} -&gt; {stage.endLodge.name}
       </h1>
       <ul>

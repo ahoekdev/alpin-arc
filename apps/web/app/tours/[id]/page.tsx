@@ -19,7 +19,7 @@ export default async function Tour({ params }: TourPageProps) {
 
   return (
     <div className="container mx-auto px-4">
-      <h1 className="text-3xl font-bold">{tour.name}</h1>
+      <h1>{tour.name}</h1>
       <ul>
         <li>Id: {tour.id}</li>
         <li>Created at: {tour.createdAt}</li>
@@ -32,8 +32,8 @@ export default async function Tour({ params }: TourPageProps) {
         <ul>
           {tour.variants.map((variant) => (
             <li key={variant.id}>
-              <Link href={`/tour-variants/${variant.id}`}>{variant.name}</Link>
-              : {variant.stageCount} stages, {variant.totalDurationMinutes} min,{" "}
+              <Link href={`/tour-variants/${variant.id}`}>{variant.name}</Link>:{" "}
+              {variant.stageCount} stages, {variant.totalDurationMinutes} min,{" "}
               {variant.totalDistanceMeters} m
             </li>
           ))}

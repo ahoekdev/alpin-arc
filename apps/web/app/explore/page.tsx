@@ -13,7 +13,7 @@ export default async function Explore() {
 
   return (
     <div className="container mx-auto px-4">
-      <h1 className="text-3xl font-bold">Explore</h1>
+      <h1>Explore</h1>
 
       <section>
         <h2>Lodges</h2>

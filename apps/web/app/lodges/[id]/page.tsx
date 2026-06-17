@@ -18,7 +18,7 @@ export default async function Lodge({ params }: LodgePageProps) {
 
   return (
     <div className="container mx-auto px-4">
-      <h1 className="text-3xl font-bold">{lodge.name}</h1>
+      <h1>{lodge.name}</h1>
       <ul>
         <li>Id: {lodge.id}</li>
         <li>Created at: {lodge.createdAt}</li>
