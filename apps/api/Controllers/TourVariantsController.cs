@@ -1,180 +1,90 @@
-using Api.Data;
 using Api.Dtos;
-using Api.Models;
+using Api.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Npgsql;
 
 namespace api.Controllers
 {
     [Route("api/tour-variants")]
     [ApiController]
-    public class TourVariantsController(AppDbContext context) : ControllerBase
+    public class TourVariantsController(ITourVariantService tourVariantService) : ControllerBase
     {
-        private readonly AppDbContext _context = context;
+        private readonly ITourVariantService _tourVariantService = tourVariantService;
 
         [HttpGet("{id}")]
         public async Task<ActionResult<TourVariantDetailResponseDto>> GetTourVariant(long id, CancellationToken cancellationToken)
         {
-            var tourVariant = await _context.TourVariants
-                .Where(v => v.Id == id)
-                .Select(v => new TourVariantDetailResponseDto(
-                    v.Id,
-                    new TourSummaryDto(v.Tour.Id, v.Tour.Name),
-                    v.Name,
-                    v.CreatedAt,
-                    v.Stages
-                        .OrderBy(s => s.Order)
-                        .Select(s => new TourVariantStageResponseDto(
-                            s.Id,
-                            new TourVariantSummaryDto(
-                                s.TourVariant.Id,
-                                s.TourVariant.TourId,
-                                s.TourVariant.Name),
-                            new StageResponseDto(
-                                s.Stage.Id,
-                                new LodgeSummaryDto(s.Stage.StartLodge.Id, s.Stage.StartLodge.Name),
-                                new LodgeSummaryDto(s.Stage.EndLodge.Id, s.Stage.EndLodge.Name),
-                                s.Stage.DurationMinutes,
-                                s.Stage.DistanceMeters,
-                                s.Stage.CreatedAt),
-                            s.Order,
-                            s.CreatedAt))
-                        .ToList()))
-                .FirstOrDefaultAsync(cancellationToken);
+            var result = await _tourVariantService.GetTourVariantAsync(id, cancellationToken);
 
-            if (tourVariant == null)
-            {
-                return NotFound();
-            }
-
-            return tourVariant;
+            return MapResult(result);
         }
 
         [HttpGet("{id}/stages")]
-        public async Task<ActionResult<IEnumerable<TourVariantStageResponseDto>>> GetTourVariantStages(long id, CancellationToken cancellationToken)
+        public async Task<ActionResult<IReadOnlyCollection<TourVariantStageResponseDto>>> GetTourVariantStages(long id, CancellationToken cancellationToken)
         {
-            var tourVariantExists = await _context.TourVariants.AnyAsync(v => v.Id == id, cancellationToken);
+            var result = await _tourVariantService.GetTourVariantStagesAsync(id, cancellationToken);
 
-            if (!tourVariantExists)
-            {
-                return NotFound();
-            }
-
-            return await _context.TourVariantStages
-                .Where(s => s.TourVariantId == id)
-                .OrderBy(s => s.Order)
-                .Select(s => new TourVariantStageResponseDto(
-                    s.Id,
-                    new TourVariantSummaryDto(
-                        s.TourVariant.Id,
-                        s.TourVariant.TourId,
-                        s.TourVariant.Name),
-                    new StageResponseDto(
-                        s.Stage.Id,
-                        new LodgeSummaryDto(s.Stage.StartLodge.Id, s.Stage.StartLodge.Name),
-                        new LodgeSummaryDto(s.Stage.EndLodge.Id, s.Stage.EndLodge.Name),
-                        s.Stage.DurationMinutes,
-                        s.Stage.DistanceMeters,
-                        s.Stage.CreatedAt),
-                    s.Order,
-                    s.CreatedAt))
-                .ToListAsync(cancellationToken);
+            return MapResult(result);
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> PutTourVariant(long id, TourVariantRequestDto request, CancellationToken cancellationToken)
         {
-            var tourVariant = await _context.TourVariants.FindAsync([id], cancellationToken);
+            var result = await _tourVariantService.UpdateTourVariantAsync(id, request, cancellationToken);
 
-            if (tourVariant == null)
-            {
-                return NotFound();
-            }
-
-            tourVariant.TourId = request.TourId;
-            tourVariant.Name = request.Name;
-
-            try
-            {
-                await _context.SaveChangesAsync(cancellationToken);
-            }
-            catch (DbUpdateException exception) when (TryHandleDatabaseException(exception, out var result))
-            {
-                return result;
-            }
-
-            return NoContent();
+            return MapResult(result);
         }
 
         [HttpPost]
         public async Task<ActionResult<TourVariantResponseDto>> PostTourVariant(TourVariantRequestDto request, CancellationToken cancellationToken)
         {
-            var tourVariant = new TourVariant
-            {
-                TourId = request.TourId,
-                Name = request.Name,
-            };
+            var result = await _tourVariantService.CreateTourVariantAsync(request, cancellationToken);
 
-            _context.TourVariants.Add(tourVariant);
-
-            try
+            if (result.Succeeded)
             {
-                await _context.SaveChangesAsync(cancellationToken);
-            }
-            catch (DbUpdateException exception) when (TryHandleDatabaseException(exception, out var result))
-            {
-                return result;
+                return CreatedAtAction(nameof(GetTourVariant), new { id = result.Value.Id }, result.Value);
             }
 
-            var response = await _context.TourVariants
-                .Where(savedTourVariant => savedTourVariant.Id == tourVariant.Id)
-                .Select(savedTourVariant => new TourVariantResponseDto(
-                    savedTourVariant.Id,
-                    new TourSummaryDto(savedTourVariant.Tour.Id, savedTourVariant.Tour.Name),
-                    savedTourVariant.Name,
-                    savedTourVariant.CreatedAt))
-                .FirstAsync(cancellationToken);
-
-            return CreatedAtAction(nameof(GetTourVariant), new { id = tourVariant.Id }, response);
+            return MapResult(result);
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTourVariant(long id, CancellationToken cancellationToken)
         {
-            var tourVariant = await _context.TourVariants.FindAsync([id], cancellationToken);
+            var result = await _tourVariantService.DeleteTourVariantAsync(id, cancellationToken);
 
-            if (tourVariant == null)
-            {
-                return NotFound();
-            }
-
-            _context.TourVariants.Remove(tourVariant);
-            await _context.SaveChangesAsync(cancellationToken);
-
-            return NoContent();
+            return MapResult(result);
         }
 
-        private ActionResult HandleDatabaseException(PostgresException exception)
+        private ActionResult<T> MapResult<T>(ServiceResult<T> result)
+            where T : notnull
         {
-            return exception.SqlState switch
+            if (result.Succeeded)
             {
-                PostgresErrorCodes.UniqueViolation => Conflict("A tour variant with the same name already exists for this tour."),
-                PostgresErrorCodes.ForeignKeyViolation => BadRequest("Tour does not exist."),
-                _ => throw exception,
+                return result.Value;
+            }
+
+            return MapError(result.Error);
+        }
+
+        private IActionResult MapResult(ServiceResult result)
+        {
+            if (result.Succeeded)
+            {
+                return NoContent();
+            }
+
+            return MapError(result.Error);
+        }
+
+        private ActionResult MapError(ServiceError? error)
+        {
+            return error?.Type switch
+            {
+                ServiceErrorType.NotFound => NotFound(),
+                ServiceErrorType.BadRequest => BadRequest(error.Message),
+                ServiceErrorType.Conflict => Conflict(error.Message),
+                _ => StatusCode(500),
             };
-        }
-
-        private bool TryHandleDatabaseException(DbUpdateException exception, out ActionResult result)
-        {
-            if (exception.InnerException is PostgresException postgresException)
-            {
-                result = HandleDatabaseException(postgresException);
-                return true;
-            }
-
-            result = new StatusCodeResult(StatusCodes.Status500InternalServerError);
-            return false;
         }
     }
 }
