@@ -1,5 +1,6 @@
 using Api.Models;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 
 namespace Api.Data;
 
@@ -12,28 +13,24 @@ public static class DemoDataSeeder
         new(
             "Berliner Höhenweg",
             [
-                new("Mayrhofen", "Gamshütte", 420, 12000),
                 new("Gamshütte", "Friesenberghaus", 540, 14500),
                 new("Friesenberghaus", "Olpererhütte", 150, 3900),
                 new("Olpererhütte", "Furtschaglhaus", 240, 9800),
                 new("Furtschaglhaus", "Berliner Hütte", 390, 11500),
                 new("Berliner Hütte", "Greizer Hütte", 420, 10000),
                 new("Greizer Hütte", "Kasseler Hütte", 540, 13000),
-                new("Kasseler Hütte", "Karl-von-Edel-Hütte", 540, 14000),
-                new("Karl-von-Edel-Hütte", "Mayrhofen", 210, 8000)
+                new("Kasseler Hütte", "Karl-von-Edel-Hütte", 540, 14000)
             ]),
         new(
             "Stubaier Höhenweg",
             [
-                new("Neustift im Stubaital", "Starkenburger Hütte", 420, 11000),
                 new("Starkenburger Hütte", "Franz-Senn-Hütte", 420, 15000),
                 new("Franz-Senn-Hütte", "Neue Regensburger Hütte", 300, 8500),
                 new("Neue Regensburger Hütte", "Dresdner Hütte", 420, 12000),
                 new("Dresdner Hütte", "Sulzenau Hütte", 180, 4500),
                 new("Sulzenau Hütte", "Nürnberger Hütte", 240, 6000),
                 new("Nürnberger Hütte", "Bremer Hütte", 360, 7500),
-                new("Bremer Hütte", "Innsbrucker Hütte", 420, 9000),
-                new("Innsbrucker Hütte", "Neustift im Stubaital", 300, 8500)
+                new("Bremer Hütte", "Innsbrucker Hütte", 420, 9000)
             ])
     ];
 
@@ -43,6 +40,8 @@ public static class DemoDataSeeder
         {
             return;
         }
+
+        ReloadPostgresTypes(appContext);
 
         foreach (var tourSeed in Tours)
         {
@@ -59,12 +58,32 @@ public static class DemoDataSeeder
             return;
         }
 
+        await ReloadPostgresTypesAsync(appContext, cancellationToken);
+
         foreach (var tourSeed in Tours)
         {
             await SeedTourAsync(appContext, tourSeed, cancellationToken);
         }
 
         await appContext.SaveChangesAsync(cancellationToken);
+    }
+
+    private static void ReloadPostgresTypes(AppDbContext context)
+    {
+        if (context.Database.GetDbConnection() is NpgsqlConnection connection)
+        {
+            connection.ReloadTypes();
+        }
+    }
+
+    private static async Task ReloadPostgresTypesAsync(
+        AppDbContext context,
+        CancellationToken cancellationToken)
+    {
+        if (context.Database.GetDbConnection() is NpgsqlConnection connection)
+        {
+            await connection.ReloadTypesAsync(cancellationToken);
+        }
     }
 
     private static void SeedTour(AppDbContext context, TourSeed tourSeed)
