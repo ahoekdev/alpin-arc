@@ -18,6 +18,14 @@ public record TourDetailResponseDto(
     long Id,
     string Name,
     DateTime CreatedAt,
-    IReadOnlyCollection<TourVariantSummaryDto> Variants);
+    IReadOnlyCollection<TourDetailVariantDto> Variants);
+
+public record TourDetailVariantDto(
+    long Id,
+    long TourId,
+    string Name,
+    int TotalDistanceMeters,
+    int TotalDurationMinutes,
+    int StageCount);
 
 public record TourSummaryDto(long Id, string Name);

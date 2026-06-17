@@ -33,7 +33,13 @@ namespace api.Controllers
                     t.CreatedAt,
                     t.Variants
                         .OrderBy(v => v.Name)
-                        .Select(v => new TourVariantSummaryDto(v.Id, v.TourId, v.Name))
+                        .Select(v => new TourDetailVariantDto(
+                            v.Id,
+                            v.TourId,
+                            v.Name,
+                            v.Stages.Sum(s => s.Stage.DistanceMeters),
+                            v.Stages.Sum(s => s.Stage.DurationMinutes),
+                            v.Stages.Count))
                         .ToList()))
                 .FirstOrDefaultAsync(cancellationToken);
 
