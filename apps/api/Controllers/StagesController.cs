@@ -1,180 +1,90 @@
-using Api.Data;
 using Api.Dtos;
-using Api.Models;
+using Api.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Npgsql;
 
 namespace api.Controllers
 {
     [Route("api/stages")]
     [ApiController]
-    public class StagesController(AppDbContext context) : ControllerBase
+    public class StagesController(IStageService stageService) : ControllerBase
     {
-        private readonly AppDbContext _context = context;
+        private readonly IStageService _stageService = stageService;
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<StageResponseDto>>> GetStages([FromQuery] int? limit)
+        public async Task<ActionResult<IReadOnlyCollection<StageResponseDto>>> GetStages([FromQuery] int? limit, CancellationToken cancellationToken)
         {
-            if (limit is <= 0 or > 100)
-            {
-                return BadRequest("Limit must be between 1 and 100.");
-            }
+            var result = await _stageService.GetStagesAsync(limit, cancellationToken);
 
-            var query = _context.Stages
-                .OrderBy(s => s.StartLodge.Name)
-                .ThenBy(s => s.EndLodge.Name)
-                .Select(s => new StageResponseDto(
-                    s.Id,
-                    new LodgeSummaryDto(s.StartLodge.Id, s.StartLodge.Name),
-                    new LodgeSummaryDto(s.EndLodge.Id, s.EndLodge.Name),
-                    s.DurationMinutes,
-                    s.DistanceMeters,
-                    s.CreatedAt));
-
-            if (limit.HasValue)
-            {
-                query = query.Take(limit.Value);
-            }
-
-            return await query.ToListAsync();
+            return MapResult(result);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<StageResponseDto>> GetStage(long id)
+        public async Task<ActionResult<StageResponseDto>> GetStage(long id, CancellationToken cancellationToken)
         {
-            var stage = await _context.Stages
-                .Where(stage => stage.Id == id)
-                .Select(stage => new StageResponseDto(
-                    stage.Id,
-                    new LodgeSummaryDto(stage.StartLodge.Id, stage.StartLodge.Name),
-                    new LodgeSummaryDto(stage.EndLodge.Id, stage.EndLodge.Name),
-                    stage.DurationMinutes,
-                    stage.DistanceMeters,
-                    stage.CreatedAt))
-                .FirstOrDefaultAsync();
+            var result = await _stageService.GetStageAsync(id, cancellationToken);
 
-            if (stage == null)
-            {
-                return NotFound();
-            }
-
-            return stage;
+            return MapResult(result);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutStage(long id, StageRequestDto request)
+        public async Task<IActionResult> PutStage(long id, StageRequestDto request, CancellationToken cancellationToken)
         {
-            var stage = await _context.Stages.FindAsync(id);
+            var result = await _stageService.UpdateStageAsync(id, request, cancellationToken);
 
-            if (stage == null)
-            {
-                return NotFound();
-            }
-
-            _context.Entry(stage).State = EntityState.Modified;
-
-            stage.StartLodgeId = request.StartLodgeId;
-            stage.EndLodgeId = request.EndLodgeId;
-            stage.DurationMinutes = request.DurationMinutes;
-            stage.DistanceMeters = request.DistanceMeters;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException exception) when (TryHandleDatabaseException(exception, out var result))
-            {
-                return result;
-            }
-
-            return NoContent();
+            return MapResult(result);
         }
 
         [HttpPost]
-        public async Task<ActionResult<StageResponseDto>> PostStage(StageRequestDto request)
+        public async Task<ActionResult<StageResponseDto>> PostStage(StageRequestDto request, CancellationToken cancellationToken)
         {
-            var stage = new Stage
-            {
-                StartLodgeId = request.StartLodgeId,
-                EndLodgeId = request.EndLodgeId,
-                DurationMinutes = request.DurationMinutes,
-                DistanceMeters = request.DistanceMeters,
-            };
+            var result = await _stageService.CreateStageAsync(request, cancellationToken);
 
-            _context.Stages.Add(stage);
-
-            try
+            if (result.Succeeded)
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException exception) when (TryHandleDatabaseException(exception, out var result))
-            {
-                return result;
+                return CreatedAtAction(nameof(GetStage), new { id = result.Value.Id }, result.Value);
             }
 
-            var response = await StageResponseQuery()
-                .FirstAsync(savedStage => savedStage.Id == stage.Id);
-
-            return CreatedAtAction(nameof(GetStage), new { id = stage.Id }, response);
+            return MapResult(result);
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteStage(long id)
+        public async Task<IActionResult> DeleteStage(long id, CancellationToken cancellationToken)
         {
-            var stage = await _context.Stages.FindAsync(id);
+            var result = await _stageService.DeleteStageAsync(id, cancellationToken);
 
-            if (stage == null)
-            {
-                return NotFound();
-            }
-
-            _context.Stages.Remove(stage);
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException exception) when (exception.InnerException is PostgresException postgresException &&
-                postgresException.SqlState == PostgresErrorCodes.ForeignKeyViolation)
-            {
-                return Conflict("Stage is used by a tour variant.");
-            }
-
-            return NoContent();
+            return MapResult(result);
         }
 
-        private IQueryable<StageResponseDto> StageResponseQuery()
+        private ActionResult<T> MapResult<T>(ServiceResult<T> result)
+            where T : notnull
         {
-            return _context.Stages.Select(stage => new StageResponseDto(
-                stage.Id,
-                new LodgeSummaryDto(stage.StartLodge.Id, stage.StartLodge.Name),
-                new LodgeSummaryDto(stage.EndLodge.Id, stage.EndLodge.Name),
-                stage.DurationMinutes,
-                stage.DistanceMeters,
-                stage.CreatedAt));
+            if (result.Succeeded)
+            {
+                return result.Value;
+            }
+
+            return MapError(result.Error);
         }
 
-        private ActionResult HandleDatabaseException(PostgresException exception)
+        private IActionResult MapResult(ServiceResult result)
         {
-            return exception.SqlState switch
+            if (result.Succeeded)
             {
-                PostgresErrorCodes.UniqueViolation => Conflict("A stage with the same start and end lodges already exists."),
-                PostgresErrorCodes.ForeignKeyViolation => BadRequest("Start or end lodge does not exist."),
-                _ => throw exception,
+                return NoContent();
+            }
+
+            return MapError(result.Error);
+        }
+
+        private ActionResult MapError(ServiceError? error)
+        {
+            return error?.Type switch
+            {
+                ServiceErrorType.NotFound => NotFound(),
+                ServiceErrorType.BadRequest => BadRequest(error.Message),
+                ServiceErrorType.Conflict => Conflict(error.Message),
+                _ => StatusCode(500),
             };
-        }
-
-        private bool TryHandleDatabaseException(DbUpdateException exception, out ActionResult result)
-        {
-            if (exception.InnerException is PostgresException postgresException)
-            {
-                result = HandleDatabaseException(postgresException);
-                return true;
-            }
-
-            result = new StatusCodeResult(StatusCodes.Status500InternalServerError);
-            return false;
         }
     }
 }
