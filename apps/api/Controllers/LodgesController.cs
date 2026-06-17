@@ -1,110 +1,95 @@
+using Api.Dtos;
+using Api.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Api.Models;
-using Api.Data;
 
 namespace api.Controllers
 {
     [Route("api/lodges")]
     [ApiController]
-    public class LodgesController(AppDbContext context) : ControllerBase
+    public class LodgesController(ILodgeService lodgeService) : ControllerBase
     {
-        private readonly AppDbContext _context = context;
+        private readonly ILodgeService _lodgeService = lodgeService;
 
         // GET: api/Lodges
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Lodge>>> GetLodges([FromQuery] int? limit)
+        public async Task<ActionResult<IReadOnlyCollection<LodgeResponseDto>>> GetLodges([FromQuery] int? limit, CancellationToken cancellationToken)
         {
-            if (limit is <= 0 or > 100)
-            {
-                return BadRequest("Limit must be between 1 and 100.");
-            }
+            var result = await _lodgeService.GetLodgesAsync(limit, cancellationToken);
 
-            IQueryable<Lodge> query = _context.Lodges.OrderBy(l => l.Name);
-
-            if (limit.HasValue)
-            {
-                query = query.Take(limit.Value);
-            }
-
-            return await query.ToListAsync();
+            return MapResult(result);
         }
 
         // GET: api/Lodges/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Lodge>> GetLodge(long id)
+        public async Task<ActionResult<LodgeResponseDto>> GetLodge(long id, CancellationToken cancellationToken)
         {
-            var lodge = await _context.Lodges.FindAsync(id);
+            var result = await _lodgeService.GetLodgeAsync(id, cancellationToken);
 
-            if (lodge == null)
-            {
-                return NotFound();
-            }
-
-            return lodge;
+            return MapResult(result);
         }
 
         // PUT: api/Lodges/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutLodge(long id, Lodge lodge)
+        public async Task<IActionResult> PutLodge(long id, LodgeRequestDto request, CancellationToken cancellationToken)
         {
-            if (id != lodge.Id)
-            {
-                return BadRequest();
-            }
+            var result = await _lodgeService.UpdateLodgeAsync(id, request, cancellationToken);
 
-            _context.Entry(lodge).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!LodgeExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            return MapResult(result);
         }
 
         // POST: api/Lodges
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Lodge>> PostLodge(Lodge lodge)
+        public async Task<ActionResult<LodgeResponseDto>> PostLodge(LodgeRequestDto request, CancellationToken cancellationToken)
         {
-            _context.Lodges.Add(lodge);
-            await _context.SaveChangesAsync();
+            var result = await _lodgeService.CreateLodgeAsync(request, cancellationToken);
 
-            return CreatedAtAction(nameof(GetLodge), new { id = lodge.Id }, lodge);
+            if (result.Succeeded)
+            {
+                return CreatedAtAction(nameof(GetLodge), new { id = result.Value.Id }, result.Value);
+            }
+
+            return MapResult(result);
         }
 
         // DELETE: api/Lodges/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteLodge(long id)
+        public async Task<IActionResult> DeleteLodge(long id, CancellationToken cancellationToken)
         {
-            var lodge = await _context.Lodges.FindAsync(id);
-            if (lodge == null)
-            {
-                return NotFound();
-            }
+            var result = await _lodgeService.DeleteLodgeAsync(id, cancellationToken);
 
-            _context.Lodges.Remove(lodge);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            return MapResult(result);
         }
 
-        private bool LodgeExists(long id)
+        private ActionResult<T> MapResult<T>(ServiceResult<T> result)
+            where T : notnull
         {
-            return _context.Lodges.Any(e => e.Id == id);
+            if (result.Succeeded)
+            {
+                return result.Value;
+            }
+
+            return MapError(result.Error);
+        }
+
+        private IActionResult MapResult(ServiceResult result)
+        {
+            if (result.Succeeded)
+            {
+                return NoContent();
+            }
+
+            return MapError(result.Error);
+        }
+
+        private ActionResult MapError(ServiceError? error)
+        {
+            return error?.Type switch
+            {
+                ServiceErrorType.NotFound => NotFound(),
+                ServiceErrorType.BadRequest => BadRequest(error.Message),
+                ServiceErrorType.Conflict => Conflict(error.Message),
+                _ => StatusCode(500),
+            };
         }
     }
 }

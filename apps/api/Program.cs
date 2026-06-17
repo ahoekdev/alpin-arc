@@ -1,10 +1,12 @@
 using Api.Data;
+using Api.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 var seedDemoData = builder.Environment.IsDevelopment();
 
 builder.Services.AddControllers();
+builder.Services.AddScoped<ILodgeService, LodgeService>();
 builder.Services.AddOpenApi(options =>
 {
     options.AddSchemaTransformer((schema, context, cancellationToken) =>
