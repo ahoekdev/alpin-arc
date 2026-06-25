@@ -11,18 +11,7 @@ builder.Services.AddScoped<IStageService, StageService>();
 builder.Services.AddScoped<ITourService, TourService>();
 builder.Services.AddScoped<ITourVariantService, TourVariantService>();
 builder.Services.AddScoped<ITourVariantStageService, TourVariantStageService>();
-builder.Services.AddOpenApi(options =>
-{
-    options.AddSchemaTransformer((schema, context, cancellationToken) =>
-    {
-        if (context.JsonTypeInfo.Type == typeof(Api.Dtos.LodgeResponseDto))
-        {
-            schema.Required = new HashSet<string> { "id", "name", "createdAt" };
-        }
-
-        return Task.CompletedTask;
-    });
-});
+builder.Services.AddOpenApi();
 
 builder.Services.AddDbContext<AppDbContext>(
     opt => opt.UseNpgsql(

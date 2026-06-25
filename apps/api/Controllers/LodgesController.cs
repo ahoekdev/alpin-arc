@@ -11,7 +11,7 @@ namespace api.Controllers
         private readonly ILodgeService _lodgeService = lodgeService;
 
         [HttpGet]
-        public async Task<ActionResult<IReadOnlyCollection<LodgeResponseDto>>> GetLodges([FromQuery] int? limit, CancellationToken cancellationToken)
+        public async Task<ActionResult<IReadOnlyCollection<LodgeSummaryDto>>> GetLodges([FromQuery] int? limit, CancellationToken cancellationToken)
         {
             var result = await _lodgeService.GetLodgesAsync(limit, cancellationToken);
 
@@ -19,7 +19,7 @@ namespace api.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<LodgeResponseDto>> GetLodge(long id, CancellationToken cancellationToken)
+        public async Task<ActionResult<LodgeDetailDto>> GetLodge(long id, CancellationToken cancellationToken)
         {
             var result = await _lodgeService.GetLodgeAsync(id, cancellationToken);
 

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { getLodge } from "@/lib/api/lodges";
@@ -17,6 +18,8 @@ export default async function Lodge({ params }: LodgePageProps) {
     notFound();
   }
 
+  const { stages, tours } = lodge;
+
   return (
     <PageContainer>
       <h1>{lodge.name}</h1>
@@ -24,6 +27,57 @@ export default async function Lodge({ params }: LodgePageProps) {
         <li>Id: {lodge.id}</li>
         <li>Created at: {lodge.createdAt}</li>
       </ul>
+
+      <h2>Stages</h2>
+      {!stages.length ? (
+        <p>No stages found.</p>
+      ) : (
+        <ul>
+          {stages.map(
+            ({ id, startLodge, endLodge, durationMinutes, distanceMeters }) => {
+              const startsAtCurrentLodge =
+                String(startLodge.id) === String(lodge.id);
+
+              return (
+                <li key={id}>
+                  {startsAtCurrentLodge ? (
+                    <>
+                      {`${startLodge.name} > `}
+                      <Link className="italic" href={`/lodges/${endLodge.id}`}>
+                        {endLodge.name}
+                      </Link>
+                    </>
+                  ) : (
+                    <>
+                      <Link
+                        className="italic"
+                        href={`/lodges/${startLodge.id}`}
+                      >
+                        {startLodge.name}
+                      </Link>
+                      {` > ${endLodge.name}`}
+                    </>
+                  )}
+                  : {durationMinutes} min, {distanceMeters} m
+                </li>
+              );
+            },
+          )}
+        </ul>
+      )}
+
+      <h2>Tours</h2>
+      {!tours.length ? (
+        <p>No tours found.</p>
+      ) : (
+        <ul>
+          {tours.map(({ id, name }) => (
+            <li key={id}>
+              <Link href={`/tours/${id}`}>{name}</Link>
+            </li>
+          ))}
+        </ul>
+      )}
     </PageContainer>
   );
 }

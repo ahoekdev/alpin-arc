@@ -1,13 +1,16 @@
 import apiClient from "./client";
 import type { components } from "./generated/schema";
 
-type Lodge = components["schemas"]["Lodge"];
+type LodgeSummary = components["schemas"]["LodgeSummaryDto"];
+type LodgeDetail = components["schemas"]["LodgeDetailDto"];
 
 type ListOptions = {
   limit?: number;
 };
 
-export async function getLodges(options: ListOptions = {}): Promise<Lodge[]> {
+export async function getLodges(
+  options: ListOptions = {},
+): Promise<LodgeSummary[]> {
   const { data, error } = await apiClient.GET("/api/lodges", {
     params: { query: options },
   });
@@ -21,7 +24,7 @@ export async function getLodges(options: ListOptions = {}): Promise<Lodge[]> {
 
 export async function getLodge(
   id: number | string,
-): Promise<Lodge | undefined> {
+): Promise<LodgeDetail | undefined> {
   const { data, error, response } = await apiClient.GET("/api/lodges/{id}", {
     params: { path: { id } },
   });

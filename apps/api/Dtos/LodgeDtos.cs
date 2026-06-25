@@ -11,9 +11,12 @@ public class LodgeRequestDto
     public string Name { get; set; } = String.Empty;
 }
 
-public record LodgeResponseDto(
+public record LodgeDetailDto(
     long Id,
     string Name,
-    DateTime CreatedAt);
+    DateTime CreatedAt,
+    IReadOnlyCollection<StageSummaryDto> Stages,
+    IReadOnlyCollection<TourSummaryDto> Tours);
+
 
 public record LodgeSummaryDto(long Id, string Name);

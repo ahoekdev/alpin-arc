@@ -19,6 +19,14 @@ public class StageRequestDto
     public int DistanceMeters { get; set; }
 }
 
+public record StageSummaryDto(
+    long Id,
+    LodgeSummaryDto StartLodge,
+    LodgeSummaryDto EndLodge,
+    int DurationMinutes,
+    int DistanceMeters
+);
+
 public record StageResponseDto(
     long Id,
     LodgeSummaryDto StartLodge,
