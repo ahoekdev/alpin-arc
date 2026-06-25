@@ -48,43 +48,4 @@ public class LodgeService(AppDbContext context) : ILodgeService
         return ServiceResult<LodgeResponseDto>.Success(lodge);
     }
 
-    public async Task<ServiceResult> UpdateLodgeAsync(long id, LodgeRequestDto request, CancellationToken cancellationToken)
-    {
-        var lodge = await _context.Lodges.SingleOrDefaultAsync(lodge => lodge.Id == id, cancellationToken);
-
-        if (lodge is null)
-        {
-            return ServiceResult.NotFound("Lodge does not exist.");
-        }
-
-        lodge.Name = request.Name;
-        await _context.SaveChangesAsync(cancellationToken);
-
-        return ServiceResult.Success();
-    }
-
-    public async Task<ServiceResult<LodgeResponseDto>> CreateLodgeAsync(LodgeRequestDto request, CancellationToken cancellationToken)
-    {
-        var lodge = new Lodge { Name = request.Name };
-
-        _context.Lodges.Add(lodge);
-        await _context.SaveChangesAsync(cancellationToken);
-
-        return ServiceResult<LodgeResponseDto>.Success(new LodgeResponseDto(lodge.Id, lodge.Name, lodge.CreatedAt));
-    }
-
-    public async Task<ServiceResult> DeleteLodgeAsync(long id, CancellationToken cancellationToken)
-    {
-        var lodge = await _context.Lodges.SingleOrDefaultAsync(lodge => lodge.Id == id, cancellationToken);
-
-        if (lodge is null)
-        {
-            return ServiceResult.NotFound("Lodge does not exist.");
-        }
-
-        _context.Lodges.Remove(lodge);
-        await _context.SaveChangesAsync(cancellationToken);
-
-        return ServiceResult.Success();
-    }
 }

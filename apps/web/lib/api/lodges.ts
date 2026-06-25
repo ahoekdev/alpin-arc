@@ -9,9 +9,7 @@ type ListOptions = {
 
 export async function getLodges(options: ListOptions = {}): Promise<Lodge[]> {
   const { data, error } = await apiClient.GET("/api/lodges", {
-    params: {
-      query: options,
-    },
+    params: { query: options },
   });
 
   if (error || !data) {
@@ -21,11 +19,11 @@ export async function getLodges(options: ListOptions = {}): Promise<Lodge[]> {
   return data;
 }
 
-export async function getLodge(id: number | string): Promise<Lodge | undefined> {
+export async function getLodge(
+  id: number | string,
+): Promise<Lodge | undefined> {
   const { data, error, response } = await apiClient.GET("/api/lodges/{id}", {
-    params: {
-      path: { id },
-    },
+    params: { path: { id } },
   });
 
   if (response.status === 404) {
