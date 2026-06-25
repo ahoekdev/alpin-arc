@@ -1,14 +1,14 @@
 services:
   postgres:
-    image: postgres:16
-    container_name: db
+    image: postgres:18
+    container_name: alpinarc-db
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: alpinarcuser
+      POSTGRES_PASSWORD: alpinarc
       POSTGRES_DB: alpinarc
     ports:
       - "5432:5432"
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - pgdata:/var/lib/postgresql
 volumes:
   pgdata:
