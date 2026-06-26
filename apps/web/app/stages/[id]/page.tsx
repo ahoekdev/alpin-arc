@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 
-import { getStage } from "@/lib/api/stages";
 import { PageContainer } from "@/components/PageContainer";
+import { getApiStagesId } from "@/lib/api/generated/orval/stages/stages";
 
 type StagePageProps = {
   params: Promise<{
@@ -11,7 +11,7 @@ type StagePageProps = {
 
 export default async function Stage({ params }: StagePageProps) {
   const { id } = await params;
-  const stage = await getStage(id);
+  const { data: stage } = await getApiStagesId(id);
 
   if (!stage) {
     notFound();

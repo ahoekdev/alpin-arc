@@ -1,10 +1,10 @@
 import Link from "next/link";
 
-import { getLodges } from "@/lib/api/lodges";
 import { PageContainer } from "@/components/PageContainer";
+import { getApiLodges } from "@/lib/api/generated/orval/lodges/lodges";
 
 export default async function Lodges() {
-  const lodges = await getLodges();
+  const { data: lodges } = await getApiLodges();
 
   return (
     <PageContainer>

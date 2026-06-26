@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { getTour } from "@/lib/api/tours";
 import { PageContainer } from "@/components/PageContainer";
+import { getApiToursId } from "@/lib/api/generated/orval/tours/tours";
 
 type TourPageProps = {
   params: Promise<{
@@ -12,7 +12,7 @@ type TourPageProps = {
 
 export default async function Tour({ params }: TourPageProps) {
   const { id } = await params;
-  const tour = await getTour(id);
+  const { data: tour } = await getApiToursId(id);
 
   if (!tour) {
     notFound();

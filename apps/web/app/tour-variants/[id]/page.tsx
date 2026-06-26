@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { getTourVariant } from "@/lib/api/tourVariants";
 import { PageContainer } from "@/components/PageContainer";
+import { getApiTourVariantsId } from "@/lib/api/generated/orval/tour-variants/tour-variants";
 
 type TourVariantPageProps = {
   params: Promise<{
@@ -12,7 +12,7 @@ type TourVariantPageProps = {
 
 export default async function TourVariant({ params }: TourVariantPageProps) {
   const { id } = await params;
-  const variant = await getTourVariant(id);
+  const { data: variant } = await getApiTourVariantsId(id);
 
   if (!variant) {
     notFound();

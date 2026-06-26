@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { getLodge } from "@/lib/api/lodges";
 import { PageContainer } from "@/components/PageContainer";
+import { getApiLodgesId } from "@/lib/api/generated/orval/lodges/lodges";
 
 type LodgePageProps = {
   params: Promise<{
@@ -12,7 +12,7 @@ type LodgePageProps = {
 
 export default async function Lodge({ params }: LodgePageProps) {
   const { id } = await params;
-  const lodge = await getLodge(id);
+  const { data: lodge } = await getApiLodgesId(id);
 
   if (!lodge) {
     notFound();
