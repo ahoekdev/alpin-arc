@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { PageContainer } from "@/components/PageContainer";
+import { StageList } from "@/components/StageList";
 import { getLodges } from "@/lib/api/generated/orval/lodges/lodges";
 import { getStages } from "@/lib/api/generated/orval/stages/stages";
 import { getTours } from "@/lib/api/generated/orval/tours/tours";
@@ -34,20 +35,7 @@ export default async function Explore() {
 
       <section>
         <h2>Stages</h2>
-        {stages.length === 0 ? (
-          <p>No stages found.</p>
-        ) : (
-          <ul>
-            {stages.map((stage) => (
-              <li key={stage.id}>
-                <Link href={`/stages/${stage.id}`}>
-                  {stage.startLodge.name} -&gt; {stage.endLodge.name}
-                </Link>
-                : {stage.durationMinutes} min, {stage.distanceMeters} m
-              </li>
-            ))}
-          </ul>
-        )}
+        <StageList stages={stages} />
         <Link href="/stages">View all stages</Link>
       </section>
 

@@ -1,6 +1,5 @@
-import Link from "next/link";
-
 import { PageContainer } from "@/components/PageContainer";
+import { StageList } from "@/components/StageList";
 import { getStages } from "@/lib/api/generated/orval/stages/stages";
 
 export default async function Stages() {
@@ -9,20 +8,7 @@ export default async function Stages() {
   return (
     <PageContainer>
       <h1>Stages</h1>
-      {stages.length === 0 ? (
-        <p>No stages found.</p>
-      ) : (
-        <ul>
-          {stages.map((stage) => (
-            <li key={stage.id}>
-              <Link href={`/stages/${stage.id}`}>
-                {`${stage.startLodge.name} > ${stage.endLodge.name}`}
-              </Link>
-              : {stage.durationMinutes} min, {stage.distanceMeters}m
-            </li>
-          ))}
-        </ul>
-      )}
+      <StageList stages={stages} />
     </PageContainer>
   );
 }

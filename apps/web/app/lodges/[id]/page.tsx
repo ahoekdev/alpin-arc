@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { PageContainer } from "@/components/PageContainer";
+import { StageList } from "@/components/StageList";
 import { getLodgeById } from "@/lib/api/generated/orval/lodges/lodges";
 
 type LodgePageProps = {
@@ -29,42 +30,7 @@ export default async function Lodge({ params }: LodgePageProps) {
       </ul>
 
       <h2>Stages</h2>
-      {!stages.length ? (
-        <p>No stages found.</p>
-      ) : (
-        <ul>
-          {stages.map(
-            ({ id, startLodge, endLodge, durationMinutes, distanceMeters }) => {
-              const startsAtCurrentLodge =
-                String(startLodge.id) === String(lodge.id);
-
-              return (
-                <li key={id}>
-                  {startsAtCurrentLodge ? (
-                    <>
-                      {`${startLodge.name} > `}
-                      <Link className="italic" href={`/lodges/${endLodge.id}`}>
-                        {endLodge.name}
-                      </Link>
-                    </>
-                  ) : (
-                    <>
-                      <Link
-                        className="italic"
-                        href={`/lodges/${startLodge.id}`}
-                      >
-                        {startLodge.name}
-                      </Link>
-                      {` > ${endLodge.name}`}
-                    </>
-                  )}
-                  : {durationMinutes} min, {distanceMeters} m
-                </li>
-              );
-            },
-          )}
-        </ul>
-      )}
+      <StageList stages={stages} />
 
       <h2>Tours</h2>
       {!tours.length ? (
