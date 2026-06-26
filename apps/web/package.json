@@ -5,10 +5,10 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "generate:api": "node scripts/generate-api.mjs",
     "start": "next start",
     "lint": "eslint",
-    "typecheck": "npx tsc --noEmit"
+    "check": "npx tsc --noEmit",
+    "generate:api": "npx orval"
   },
   "dependencies": {
     "@next/env": "^16.2.9",

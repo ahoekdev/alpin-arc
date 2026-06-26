@@ -10,7 +10,7 @@ namespace api.Controllers
     {
         private readonly ITourVariantService _tourVariantService = tourVariantService;
 
-        [HttpGet("{id}")]
+        [HttpGet("{id}", Name = "getTourVariantById")]
         public async Task<ActionResult<TourVariantDetailResponseDto>> GetTourVariant(long id, CancellationToken cancellationToken)
         {
             var result = await _tourVariantService.GetTourVariantAsync(id, cancellationToken);
@@ -18,7 +18,7 @@ namespace api.Controllers
             return this.ToActionResult(result);
         }
 
-        [HttpGet("{id}/stages")]
+        [HttpGet("{id}/stages", Name = "getTourVariantStages")]
         public async Task<ActionResult<IReadOnlyCollection<TourVariantStageResponseDto>>> GetTourVariantStages(long id, CancellationToken cancellationToken)
         {
             var result = await _tourVariantService.GetTourVariantStagesAsync(id, cancellationToken);
@@ -26,7 +26,7 @@ namespace api.Controllers
             return this.ToActionResult(result);
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("{id}", Name = "updateTourVariant")]
         public async Task<IActionResult> PutTourVariant(long id, TourVariantRequestDto request, CancellationToken cancellationToken)
         {
             var result = await _tourVariantService.UpdateTourVariantAsync(id, request, cancellationToken);
@@ -34,7 +34,7 @@ namespace api.Controllers
             return this.ToNoContentActionResult(result);
         }
 
-        [HttpPost]
+        [HttpPost(Name = "createTourVariant")]
         public async Task<ActionResult<TourVariantResponseDto>> PostTourVariant(TourVariantRequestDto request, CancellationToken cancellationToken)
         {
             var result = await _tourVariantService.CreateTourVariantAsync(request, cancellationToken);
@@ -47,7 +47,7 @@ namespace api.Controllers
             return this.ToActionResult(result);
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}", Name = "deleteTourVariant")]
         public async Task<IActionResult> DeleteTourVariant(long id, CancellationToken cancellationToken)
         {
             var result = await _tourVariantService.DeleteTourVariantAsync(id, cancellationToken);

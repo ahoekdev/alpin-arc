@@ -10,7 +10,7 @@ namespace api.Controllers
     {
         private readonly ITourVariantStageService _tourVariantStageService = tourVariantStageService;
 
-        [HttpPut("{id}")]
+        [HttpPut("{id}", Name = "updateTourVariantStage")]
         public async Task<IActionResult> PutTourVariantStage(long id, TourVariantStageRequestDto request, CancellationToken cancellationToken)
         {
             var result = await _tourVariantStageService.UpdateTourVariantStageAsync(id, request, cancellationToken);
@@ -18,7 +18,7 @@ namespace api.Controllers
             return this.ToNoContentActionResult(result);
         }
 
-        [HttpPost]
+        [HttpPost(Name = "createTourVariantStage")]
         public async Task<ActionResult<TourVariantStageResponseDto>> PostTourVariantStage(TourVariantStageRequestDto request, CancellationToken cancellationToken)
         {
             var result = await _tourVariantStageService.CreateTourVariantStageAsync(request, cancellationToken);
@@ -31,7 +31,7 @@ namespace api.Controllers
             return this.ToActionResult(result);
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}", Name = "deleteTourVariantStage")]
         public async Task<IActionResult> DeleteTourVariantStage(long id, CancellationToken cancellationToken)
         {
             var result = await _tourVariantStageService.DeleteTourVariantStageAsync(id, cancellationToken);

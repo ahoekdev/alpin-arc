@@ -1,10 +1,10 @@
 import Link from "next/link";
 
 import { PageContainer } from "@/components/PageContainer";
-import { getApiStages } from "@/lib/api/generated/orval/stages/stages";
+import { getStages } from "@/lib/api/generated/orval/stages/stages";
 
 export default async function Stages() {
-  const { data: stages } = await getApiStages();
+  const { data: stages } = await getStages();
 
   return (
     <PageContainer>

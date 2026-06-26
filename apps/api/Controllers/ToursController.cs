@@ -10,7 +10,7 @@ namespace api.Controllers
     {
         private readonly ITourService _tourService = tourService;
 
-        [HttpGet]
+        [HttpGet(Name = "getTours")]
         public async Task<ActionResult<IReadOnlyCollection<TourResponseDto>>> GetTours([FromQuery] int? limit, CancellationToken cancellationToken)
         {
             var result = await _tourService.GetToursAsync(limit, cancellationToken);
@@ -18,7 +18,7 @@ namespace api.Controllers
             return this.ToActionResult(result);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id}", Name = "getTourById")]
         public async Task<ActionResult<TourDetailResponseDto>> GetTour(long id, CancellationToken cancellationToken)
         {
             var result = await _tourService.GetTourAsync(id, cancellationToken);
@@ -26,7 +26,7 @@ namespace api.Controllers
             return this.ToActionResult(result);
         }
 
-        [HttpGet("{id}/variants")]
+        [HttpGet("{id}/variants", Name = "getTourVariants")]
         public async Task<ActionResult<IReadOnlyCollection<TourVariantResponseDto>>> GetTourVariants(long id, CancellationToken cancellationToken)
         {
             var result = await _tourService.GetTourVariantsAsync(id, cancellationToken);
@@ -34,7 +34,7 @@ namespace api.Controllers
             return this.ToActionResult(result);
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("{id}", Name = "updateTour")]
         public async Task<IActionResult> PutTour(long id, TourRequestDto request, CancellationToken cancellationToken)
         {
             var result = await _tourService.UpdateTourAsync(id, request, cancellationToken);
@@ -42,7 +42,7 @@ namespace api.Controllers
             return this.ToNoContentActionResult(result);
         }
 
-        [HttpPost]
+        [HttpPost(Name = "createTour")]
         public async Task<ActionResult<TourResponseDto>> PostTour(TourRequestDto request, CancellationToken cancellationToken)
         {
             var result = await _tourService.CreateTourAsync(request, cancellationToken);
@@ -55,7 +55,7 @@ namespace api.Controllers
             return this.ToActionResult(result);
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}", Name = "deleteTour")]
         public async Task<IActionResult> DeleteTour(long id, CancellationToken cancellationToken)
         {
             var result = await _tourService.DeleteTourAsync(id, cancellationToken);

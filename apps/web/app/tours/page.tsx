@@ -1,10 +1,10 @@
 import Link from "next/link";
 
 import { PageContainer } from "@/components/PageContainer";
-import { getApiTours } from "@/lib/api/generated/orval/tours/tours";
+import { getTours } from "@/lib/api/generated/orval/tours/tours";
 
 export default async function Tours() {
-  const { data: tours } = await getApiTours();
+  const { data: tours } = await getTours();
 
   return (
     <PageContainer>

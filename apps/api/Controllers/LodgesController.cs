@@ -10,7 +10,7 @@ namespace api.Controllers
     {
         private readonly ILodgeService _lodgeService = lodgeService;
 
-        [HttpGet]
+        [HttpGet(Name = "getLodges")]
         public async Task<ActionResult<IReadOnlyCollection<LodgeSummaryDto>>> GetLodges([FromQuery] int? limit, CancellationToken cancellationToken)
         {
             var result = await _lodgeService.GetLodgesAsync(limit, cancellationToken);
@@ -18,7 +18,7 @@ namespace api.Controllers
             return this.ToActionResult(result);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id}", Name = "getLodgeById")]
         public async Task<ActionResult<LodgeDetailDto>> GetLodge(long id, CancellationToken cancellationToken)
         {
             var result = await _lodgeService.GetLodgeAsync(id, cancellationToken);

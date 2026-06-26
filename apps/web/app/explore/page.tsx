@@ -1,15 +1,15 @@
 import Link from "next/link";
 
 import { PageContainer } from "@/components/PageContainer";
-import { getApiLodges } from "@/lib/api/generated/orval/lodges/lodges";
-import { getApiStages } from "@/lib/api/generated/orval/stages/stages";
-import { getApiTours } from "@/lib/api/generated/orval/tours/tours";
+import { getLodges } from "@/lib/api/generated/orval/lodges/lodges";
+import { getStages } from "@/lib/api/generated/orval/stages/stages";
+import { getTours } from "@/lib/api/generated/orval/tours/tours";
 
 export default async function Explore() {
   const [lodges, stages, tours] = await Promise.all([
-    getApiLodges({ limit: 3 }).then((res) => res.data),
-    getApiStages({ limit: 3 }).then((res) => res.data),
-    getApiTours({ limit: 3 }).then((res) => res.data),
+    getLodges({ limit: 3 }).then((res) => res.data),
+    getStages({ limit: 3 }).then((res) => res.data),
+    getTours({ limit: 3 }).then((res) => res.data),
   ]);
 
   return (

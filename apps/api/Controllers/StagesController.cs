@@ -10,7 +10,7 @@ namespace api.Controllers
     {
         private readonly IStageService _stageService = stageService;
 
-        [HttpGet]
+        [HttpGet(Name = "getStages")]
         public async Task<ActionResult<IReadOnlyCollection<StageResponseDto>>> GetStages([FromQuery] int? limit, CancellationToken cancellationToken)
         {
             var result = await _stageService.GetStagesAsync(limit, cancellationToken);
@@ -18,7 +18,7 @@ namespace api.Controllers
             return this.ToActionResult(result);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id}", Name = "getStageById")]
         public async Task<ActionResult<StageResponseDto>> GetStage(long id, CancellationToken cancellationToken)
         {
             var result = await _stageService.GetStageAsync(id, cancellationToken);
@@ -26,7 +26,7 @@ namespace api.Controllers
             return this.ToActionResult(result);
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("{id}", Name = "updateStage")]
         public async Task<IActionResult> PutStage(long id, StageRequestDto request, CancellationToken cancellationToken)
         {
             var result = await _stageService.UpdateStageAsync(id, request, cancellationToken);
@@ -34,7 +34,7 @@ namespace api.Controllers
             return this.ToNoContentActionResult(result);
         }
 
-        [HttpPost]
+        [HttpPost(Name = "createStage")]
         public async Task<ActionResult<StageResponseDto>> PostStage(StageRequestDto request, CancellationToken cancellationToken)
         {
             var result = await _stageService.CreateStageAsync(request, cancellationToken);
@@ -47,7 +47,7 @@ namespace api.Controllers
             return this.ToActionResult(result);
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}", Name = "deleteStage")]
         public async Task<IActionResult> DeleteStage(long id, CancellationToken cancellationToken)
         {
             var result = await _stageService.DeleteStageAsync(id, cancellationToken);
