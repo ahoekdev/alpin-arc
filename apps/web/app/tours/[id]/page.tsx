@@ -21,6 +21,7 @@ export default async function Tour({ params }: TourPageProps) {
   return (
     <PageContainer>
       <h1>{tour.name}</h1>
+      {tour.description ? <p>{tour.description}</p> : null}
       <ul>
         <li>Id: {tour.id}</li>
         <li>Created at: {tour.createdAt}</li>
@@ -36,6 +37,7 @@ export default async function Tour({ params }: TourPageProps) {
               <Link href={`/tour-variants/${variant.id}`}>{variant.name}</Link>:{" "}
               {variant.stageCount} stages, {variant.totalDurationMinutes} min,{" "}
               {variant.totalDistanceMeters} m
+              {variant.description ? <p>{variant.description}</p> : null}
             </li>
           ))}
         </ul>

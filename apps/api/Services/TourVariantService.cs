@@ -20,8 +20,9 @@ public class TourVariantService(AppDbContext context) : ITourVariantService
             .Where(v => v.Id == id)
             .Select(v => new TourVariantDetailResponseDto(
                 v.Id,
-                new TourSummaryDto(v.Tour.Id, v.Tour.Name),
+                new TourSummaryDto(v.Tour.Id, v.Tour.Name, v.Tour.Description),
                 v.Name,
+                v.Description,
                 v.IsPrimary,
                 v.CreatedAt,
                 v.Stages
@@ -32,6 +33,7 @@ public class TourVariantService(AppDbContext context) : ITourVariantService
                             s.TourVariant.Id,
                             s.TourVariant.TourId,
                             s.TourVariant.Name,
+                            s.TourVariant.Description,
                             s.TourVariant.IsPrimary),
                         new StageResponseDto(
                             s.Stage.Id,
@@ -74,6 +76,7 @@ public class TourVariantService(AppDbContext context) : ITourVariantService
                     s.TourVariant.Id,
                     s.TourVariant.TourId,
                     s.TourVariant.Name,
+                    s.TourVariant.Description,
                     s.TourVariant.IsPrimary),
                 new StageResponseDto(
                     s.Stage.Id,
@@ -100,6 +103,7 @@ public class TourVariantService(AppDbContext context) : ITourVariantService
 
         tourVariant.TourId = request.TourId;
         tourVariant.Name = request.Name;
+        tourVariant.Description = request.Description;
         tourVariant.IsPrimary = request.IsPrimary;
 
         try
@@ -120,6 +124,7 @@ public class TourVariantService(AppDbContext context) : ITourVariantService
         {
             TourId = request.TourId,
             Name = request.Name,
+            Description = request.Description,
             IsPrimary = request.IsPrimary,
         };
 
@@ -139,8 +144,9 @@ public class TourVariantService(AppDbContext context) : ITourVariantService
             .Where(savedTourVariant => savedTourVariant.Id == tourVariant.Id)
             .Select(savedTourVariant => new TourVariantResponseDto(
                 savedTourVariant.Id,
-                new TourSummaryDto(savedTourVariant.Tour.Id, savedTourVariant.Tour.Name),
+                new TourSummaryDto(savedTourVariant.Tour.Id, savedTourVariant.Tour.Name, savedTourVariant.Tour.Description),
                 savedTourVariant.Name,
+                savedTourVariant.Description,
                 savedTourVariant.IsPrimary,
                 savedTourVariant.CreatedAt))
             .FirstAsync(cancellationToken);

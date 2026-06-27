@@ -16,6 +16,7 @@ export default async function Tours() {
           {tours.map((tour) => (
             <li key={tour.id}>
               <Link href={`/tours/${tour.id}`}>{tour.name}</Link>
+              {tour.description ? <p>{tour.description}</p> : null}
             </li>
           ))}
         </ul>

@@ -29,7 +29,7 @@ public class TourService(AppDbContext context) : ITourService
         }
 
         var tours = await query
-            .Select(tour => new TourResponseDto(tour.Id, tour.Name, tour.CreatedAt))
+            .Select(tour => new TourResponseDto(tour.Id, tour.Name, tour.Description, tour.CreatedAt))
             .ToListAsync(cancellationToken);
 
         return ServiceResult<IReadOnlyCollection<TourResponseDto>>.Success(tours);
@@ -43,6 +43,7 @@ public class TourService(AppDbContext context) : ITourService
             .Select(tour => new TourDetailResponseDto(
                 tour.Id,
                 tour.Name,
+                tour.Description,
                 tour.CreatedAt,
                 tour.Variants
                     .OrderBy(variant => variant.Name)
@@ -50,6 +51,7 @@ public class TourService(AppDbContext context) : ITourService
                         variant.Id,
                         variant.TourId,
                         variant.Name,
+                        variant.Description,
                         variant.IsPrimary,
                         variant.Stages.Sum(stage => stage.Stage.DistanceMeters),
                         variant.Stages.Sum(stage => stage.Stage.DurationMinutes),
@@ -82,8 +84,9 @@ public class TourService(AppDbContext context) : ITourService
             .OrderBy(variant => variant.Name)
             .Select(variant => new TourVariantResponseDto(
                 variant.Id,
-                new TourSummaryDto(variant.Tour.Id, variant.Tour.Name),
+                new TourSummaryDto(variant.Tour.Id, variant.Tour.Name, variant.Tour.Description),
                 variant.Name,
+                variant.Description,
                 variant.IsPrimary,
                 variant.CreatedAt))
             .ToListAsync(cancellationToken);
@@ -101,6 +104,7 @@ public class TourService(AppDbContext context) : ITourService
         }
 
         tour.Name = request.Name;
+        tour.Description = request.Description;
 
         try
         {
@@ -119,6 +123,7 @@ public class TourService(AppDbContext context) : ITourService
         var tour = new Tour
         {
             Name = request.Name,
+            Description = request.Description,
         };
 
         _context.Tours.Add(tour);
@@ -135,7 +140,7 @@ public class TourService(AppDbContext context) : ITourService
         var response = await _context.Tours
             .AsNoTracking()
             .Where(savedTour => savedTour.Id == tour.Id)
-            .Select(savedTour => new TourResponseDto(savedTour.Id, savedTour.Name, savedTour.CreatedAt))
+            .Select(savedTour => new TourResponseDto(savedTour.Id, savedTour.Name, savedTour.Description, savedTour.CreatedAt))
             .FirstAsync(cancellationToken);
 
         return ServiceResult<TourResponseDto>.Success(response);

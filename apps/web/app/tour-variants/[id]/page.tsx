@@ -11,31 +11,33 @@ type TourVariantPageProps = {
 };
 
 export default async function TourVariant({ params }: TourVariantPageProps) {
-  const { id } = await params;
-  const { data: variant } = await getTourVariantById(id);
+  const { id: variantId } = await params;
+
+  const { data: variant } = await getTourVariantById(variantId);
 
   if (!variant) {
     notFound();
   }
 
+  const { name, description, stages, id, tour } = variant;
+
   return (
     <PageContainer>
-      <h1>{variant.name}</h1>
+      <h1>{name}</h1>
+      {description ? <p>{description}</p> : null}
       <ul>
-        <li>Id: {variant.id}</li>
+        <li>Id: {id}</li>
         <li>
-          Tour:{" "}
-          <Link href={`/tours/${variant.tour.id}`}>{variant.tour.name}</Link>
+          Tour: <Link href={`/tours/${tour.id}`}>{tour.name}</Link>
         </li>
-        <li>Created at: {variant.createdAt}</li>
       </ul>
 
       <h2>Stages</h2>
-      {variant.stages.length === 0 ? (
+      {!stages.length ? (
         <p>No stages found.</p>
       ) : (
         <ul>
-          {variant.stages.map((variantStage) => (
+          {stages.map((variantStage) => (
             <li key={variantStage.id}>
               {variantStage.order}.{" "}
               <Link href={`/stages/${variantStage.stage.id}`}>

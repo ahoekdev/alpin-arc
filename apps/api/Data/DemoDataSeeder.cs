@@ -12,9 +12,11 @@ public static class DemoDataSeeder
     [
         new(
             "Berliner Höhenweg",
+            "A hut-to-hut traverse through the Zillertal Alps linking classic mountain huts on a demanding high route.",
             [
                 new(
                     DefaultVariantName,
+                    "The standard hut sequence across the Berliner Höhenweg.",
                     true,
                     [
                         new("Gamshütte", "Friesenberghaus", 540, 14500),
@@ -28,9 +30,11 @@ public static class DemoDataSeeder
             ]),
         new(
             "Stubaier Höhenweg",
+            "A multi-day circuit through the Stubai Alps with sustained hut-to-hut walking and glacier views.",
             [
                 new(
                     DefaultVariantName,
+                    "The standard hut sequence across the Stubaier Höhenweg.",
                     true,
                     [
                         new("Starkenburger Hütte", "Franz-Senn-Hütte", 420, 15000),
@@ -44,9 +48,11 @@ public static class DemoDataSeeder
             ]),
         new(
             "Sellrainer Hüttenrunde",
+            "A compact hut circuit in the Sellrain mountains connecting high alpine huts above the Sellrain valley.",
             [
                 new(
                     "Normal",
+                    "The regular hut-to-hut line from the Potsdamer Hütte across Westfalenhaus and Pforzheimer Hütte to the Dortmunder Hütte.",
                     true,
                     [
                         new("Potsdamer Hütte", "Westfalenhaus", 300, 9000),
@@ -56,6 +62,7 @@ public static class DemoDataSeeder
                     ]),
                 new(
                     "Alpine",
+                    "A more alpine variant that links Westfalenhaus to Pforzheimer Hütte via the Winnebachseehütte.",
                     false,
                     [
                         new("Potsdamer Hütte", "Westfalenhaus", 300, 9000),
@@ -127,8 +134,13 @@ public static class DemoDataSeeder
 
         if (tour is null)
         {
-            tour = new Tour { Name = tourSeed.Name };
+            tour = new Tour { Name = tourSeed.Name, Description = tourSeed.Description };
             context.Tours.Add(tour);
+            context.SaveChanges();
+        }
+        else if (tour.Description != tourSeed.Description)
+        {
+            tour.Description = tourSeed.Description;
             context.SaveChanges();
         }
 
@@ -148,12 +160,19 @@ public static class DemoDataSeeder
 
         if (variant is null)
         {
-            variant = new TourVariant { TourId = tour.Id, Name = variantSeed.Name, IsPrimary = variantSeed.IsPrimary };
+            variant = new TourVariant
+            {
+                TourId = tour.Id,
+                Name = variantSeed.Name,
+                Description = variantSeed.Description,
+                IsPrimary = variantSeed.IsPrimary
+            };
             context.TourVariants.Add(variant);
             context.SaveChanges();
         }
-        else if (variant.IsPrimary != variantSeed.IsPrimary)
+        else if (variant.Description != variantSeed.Description || variant.IsPrimary != variantSeed.IsPrimary)
         {
+            variant.Description = variantSeed.Description;
             variant.IsPrimary = variantSeed.IsPrimary;
             context.SaveChanges();
         }
@@ -172,8 +191,13 @@ public static class DemoDataSeeder
 
         if (tour is null)
         {
-            tour = new Tour { Name = tourSeed.Name };
+            tour = new Tour { Name = tourSeed.Name, Description = tourSeed.Description };
             context.Tours.Add(tour);
+            await context.SaveChangesAsync(cancellationToken);
+        }
+        else if (tour.Description != tourSeed.Description)
+        {
+            tour.Description = tourSeed.Description;
             await context.SaveChangesAsync(cancellationToken);
         }
 
@@ -196,12 +220,19 @@ public static class DemoDataSeeder
 
         if (variant is null)
         {
-            variant = new TourVariant { TourId = tour.Id, Name = variantSeed.Name, IsPrimary = variantSeed.IsPrimary };
+            variant = new TourVariant
+            {
+                TourId = tour.Id,
+                Name = variantSeed.Name,
+                Description = variantSeed.Description,
+                IsPrimary = variantSeed.IsPrimary
+            };
             context.TourVariants.Add(variant);
             await context.SaveChangesAsync(cancellationToken);
         }
-        else if (variant.IsPrimary != variantSeed.IsPrimary)
+        else if (variant.Description != variantSeed.Description || variant.IsPrimary != variantSeed.IsPrimary)
         {
+            variant.Description = variantSeed.Description;
             variant.IsPrimary = variantSeed.IsPrimary;
             await context.SaveChangesAsync(cancellationToken);
         }
@@ -364,10 +395,14 @@ public static class DemoDataSeeder
         return lodge;
     }
 
-    private sealed record TourSeed(string Name, IReadOnlyList<TourVariantSeed> Variants);
+    private sealed record TourSeed(
+        string Name,
+        string Description,
+        IReadOnlyList<TourVariantSeed> Variants);
 
     private sealed record TourVariantSeed(
         string Name,
+        string Description,
         bool IsPrimary,
         IReadOnlyList<StageSeed> Stages);
 

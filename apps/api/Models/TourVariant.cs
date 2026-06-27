@@ -12,6 +12,9 @@ public class TourVariant
     [Required]
     public string Name { get; set; } = String.Empty;
 
+    [Required]
+    public string Description { get; set; } = String.Empty;
+
     public bool IsPrimary { get; set; }
 
     public DateTime CreatedAt { get; set; }

@@ -16,7 +16,8 @@ POST {{api_HostAddress}}/api/tours
 Content-Type: application/json
 
 {
-  "name": "Haute Route"
+  "name": "Haute Route",
+  "description": "A multi-day alpine traverse between classic mountain huts."
 }
 
 ###
@@ -25,7 +26,8 @@ PUT {{api_HostAddress}}/api/tours/{{tourId}}
 Content-Type: application/json
 
 {
-  "name": "Haute Route"
+  "name": "Haute Route",
+  "description": "A multi-day alpine traverse between classic mountain huts."
 }
 
 ###

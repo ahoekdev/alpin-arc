@@ -37,9 +37,10 @@ export default async function Lodge({ params }: LodgePageProps) {
         <p>No tours found.</p>
       ) : (
         <ul>
-          {tours.map(({ id, name }) => (
+          {tours.map(({ id, name, description }) => (
             <li key={id}>
               <Link href={`/tours/${id}`}>{name}</Link>
+              {description ? <p>{description}</p> : null}
             </li>
           ))}
         </ul>

@@ -14,6 +14,7 @@ Content-Type: application/json
 {
   "tourId": {{tourId}},
   "name": "Normal",
+  "description": "The standard version of the tour.",
   "isPrimary": false
 }
 
@@ -25,6 +26,7 @@ Content-Type: application/json
 {
   "tourId": {{tourId}},
   "name": "Alpine",
+  "description": "A more demanding high alpine version of the tour.",
   "isPrimary": true
 }
 
