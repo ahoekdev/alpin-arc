@@ -13,24 +13,57 @@ public static class DemoDataSeeder
         new(
             "Berliner Höhenweg",
             [
-                new("Gamshütte", "Friesenberghaus", 540, 14500),
-                new("Friesenberghaus", "Olpererhütte", 150, 3900),
-                new("Olpererhütte", "Furtschaglhaus", 240, 9800),
-                new("Furtschaglhaus", "Berliner Hütte", 390, 11500),
-                new("Berliner Hütte", "Greizer Hütte", 420, 10000),
-                new("Greizer Hütte", "Kasseler Hütte", 540, 13000),
-                new("Kasseler Hütte", "Karl-von-Edel-Hütte", 540, 14000)
+                new(
+                    DefaultVariantName,
+                    true,
+                    [
+                        new("Gamshütte", "Friesenberghaus", 540, 14500),
+                        new("Friesenberghaus", "Olpererhütte", 150, 3900),
+                        new("Olpererhütte", "Furtschaglhaus", 240, 9800),
+                        new("Furtschaglhaus", "Berliner Hütte", 390, 11500),
+                        new("Berliner Hütte", "Greizer Hütte", 420, 10000),
+                        new("Greizer Hütte", "Kasseler Hütte", 540, 13000),
+                        new("Kasseler Hütte", "Karl-von-Edel-Hütte", 540, 14000)
+                    ])
             ]),
         new(
             "Stubaier Höhenweg",
             [
-                new("Starkenburger Hütte", "Franz-Senn-Hütte", 420, 15000),
-                new("Franz-Senn-Hütte", "Neue Regensburger Hütte", 300, 8500),
-                new("Neue Regensburger Hütte", "Dresdner Hütte", 420, 12000),
-                new("Dresdner Hütte", "Sulzenau Hütte", 180, 4500),
-                new("Sulzenau Hütte", "Nürnberger Hütte", 240, 6000),
-                new("Nürnberger Hütte", "Bremer Hütte", 360, 7500),
-                new("Bremer Hütte", "Innsbrucker Hütte", 420, 9000)
+                new(
+                    DefaultVariantName,
+                    true,
+                    [
+                        new("Starkenburger Hütte", "Franz-Senn-Hütte", 420, 15000),
+                        new("Franz-Senn-Hütte", "Neue Regensburger Hütte", 300, 8500),
+                        new("Neue Regensburger Hütte", "Dresdner Hütte", 420, 12000),
+                        new("Dresdner Hütte", "Sulzenau Hütte", 180, 4500),
+                        new("Sulzenau Hütte", "Nürnberger Hütte", 240, 6000),
+                        new("Nürnberger Hütte", "Bremer Hütte", 360, 7500),
+                        new("Bremer Hütte", "Innsbrucker Hütte", 420, 9000)
+                    ])
+            ]),
+        new(
+            "Sellrainer Hüttenrunde",
+            [
+                new(
+                    "Normal",
+                    true,
+                    [
+                        new("Potsdamer Hütte", "Westfalenhaus", 300, 9000),
+                        new("Westfalenhaus", "Pforzheimer Hütte", 360, 11000),
+                        new("Pforzheimer Hütte", "Schweinfurter Hütte", 240, 9000),
+                        new("Schweinfurter Hütte", "Dortmunder Hütte", 300, 12000)
+                    ]),
+                new(
+                    "Alpine",
+                    false,
+                    [
+                        new("Potsdamer Hütte", "Westfalenhaus", 300, 9000),
+                        new("Westfalenhaus", "Winnebachseehütte", 360, 10000),
+                        new("Winnebachseehütte", "Pforzheimer Hütte", 300, 9000),
+                        new("Pforzheimer Hütte", "Schweinfurter Hütte", 240, 9000),
+                        new("Schweinfurter Hütte", "Dortmunder Hütte", 300, 12000)
+                    ])
             ])
     ];
 
@@ -99,22 +132,33 @@ public static class DemoDataSeeder
             context.SaveChanges();
         }
 
+        foreach (var variantSeed in tourSeed.Variants)
+        {
+            SeedTourVariant(context, tour, variantSeed);
+        }
+    }
+
+    private static void SeedTourVariant(
+        AppDbContext context,
+        Tour tour,
+        TourVariantSeed variantSeed)
+    {
         var variant = context.TourVariants
-            .SingleOrDefault(v => v.TourId == tour.Id && v.Name == DefaultVariantName);
+            .SingleOrDefault(v => v.TourId == tour.Id && v.Name == variantSeed.Name);
 
         if (variant is null)
         {
-            variant = new TourVariant { TourId = tour.Id, Name = DefaultVariantName, IsPrimary = true };
+            variant = new TourVariant { TourId = tour.Id, Name = variantSeed.Name, IsPrimary = variantSeed.IsPrimary };
             context.TourVariants.Add(variant);
             context.SaveChanges();
         }
-        else if (!variant.IsPrimary)
+        else if (variant.IsPrimary != variantSeed.IsPrimary)
         {
-            variant.IsPrimary = true;
+            variant.IsPrimary = variantSeed.IsPrimary;
             context.SaveChanges();
         }
 
-        SeedStages(context, variant, tourSeed.Stages);
+        SeedStages(context, variant, variantSeed.Stages);
     }
 
     private static async Task SeedTourAsync(
@@ -133,24 +177,36 @@ public static class DemoDataSeeder
             await context.SaveChangesAsync(cancellationToken);
         }
 
+        foreach (var variantSeed in tourSeed.Variants)
+        {
+            await SeedTourVariantAsync(context, tour, variantSeed, cancellationToken);
+        }
+    }
+
+    private static async Task SeedTourVariantAsync(
+        AppDbContext context,
+        Tour tour,
+        TourVariantSeed variantSeed,
+        CancellationToken cancellationToken)
+    {
         var variant = await context.TourVariants
             .SingleOrDefaultAsync(
-                v => v.TourId == tour.Id && v.Name == DefaultVariantName,
+                v => v.TourId == tour.Id && v.Name == variantSeed.Name,
                 cancellationToken);
 
         if (variant is null)
         {
-            variant = new TourVariant { TourId = tour.Id, Name = DefaultVariantName, IsPrimary = true };
+            variant = new TourVariant { TourId = tour.Id, Name = variantSeed.Name, IsPrimary = variantSeed.IsPrimary };
             context.TourVariants.Add(variant);
             await context.SaveChangesAsync(cancellationToken);
         }
-        else if (!variant.IsPrimary)
+        else if (variant.IsPrimary != variantSeed.IsPrimary)
         {
-            variant.IsPrimary = true;
+            variant.IsPrimary = variantSeed.IsPrimary;
             await context.SaveChangesAsync(cancellationToken);
         }
 
-        await SeedStagesAsync(context, variant, tourSeed.Stages, cancellationToken);
+        await SeedStagesAsync(context, variant, variantSeed.Stages, cancellationToken);
     }
 
     private static void SeedStages(
@@ -164,7 +220,10 @@ public static class DemoDataSeeder
             var stage = GetOrCreateStage(context, stageSeed);
             var order = index + 1;
 
-            if (!context.TourVariantStages.Any(vs => vs.TourVariantId == variant.Id && vs.Order == order))
+            var tourVariantStage = context.TourVariantStages
+                .SingleOrDefault(vs => vs.TourVariantId == variant.Id && vs.Order == order);
+
+            if (tourVariantStage is null)
             {
                 context.TourVariantStages.Add(new TourVariantStage
                 {
@@ -172,6 +231,10 @@ public static class DemoDataSeeder
                     StageId = stage.Id,
                     Order = order
                 });
+            }
+            else if (tourVariantStage.StageId != stage.Id)
+            {
+                tourVariantStage.StageId = stage.Id;
             }
         }
     }
@@ -188,9 +251,11 @@ public static class DemoDataSeeder
             var stage = await GetOrCreateStageAsync(context, stageSeed, cancellationToken);
             var order = index + 1;
 
-            if (!await context.TourVariantStages.AnyAsync(
+            var tourVariantStage = await context.TourVariantStages.SingleOrDefaultAsync(
                     vs => vs.TourVariantId == variant.Id && vs.Order == order,
-                    cancellationToken))
+                    cancellationToken);
+
+            if (tourVariantStage is null)
             {
                 context.TourVariantStages.Add(new TourVariantStage
                 {
@@ -198,6 +263,10 @@ public static class DemoDataSeeder
                     StageId = stage.Id,
                     Order = order
                 });
+            }
+            else if (tourVariantStage.StageId != stage.Id)
+            {
+                tourVariantStage.StageId = stage.Id;
             }
         }
     }
@@ -295,7 +364,12 @@ public static class DemoDataSeeder
         return lodge;
     }
 
-    private sealed record TourSeed(string Name, IReadOnlyList<StageSeed> Stages);
+    private sealed record TourSeed(string Name, IReadOnlyList<TourVariantSeed> Variants);
+
+    private sealed record TourVariantSeed(
+        string Name,
+        bool IsPrimary,
+        IReadOnlyList<StageSeed> Stages);
 
     private sealed record StageSeed(
         string StartLodgeName,
