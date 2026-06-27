@@ -16,6 +16,7 @@ public record TourResponseDto(
     long Id,
     string Name,
     string Description,
+    int VariantCount,
     DateTime CreatedAt);
 
 public record TourDetailResponseDto(

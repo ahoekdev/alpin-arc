@@ -29,7 +29,12 @@ public class TourService(AppDbContext context) : ITourService
         }
 
         var tours = await query
-            .Select(tour => new TourResponseDto(tour.Id, tour.Name, tour.Description, tour.CreatedAt))
+            .Select(tour => new TourResponseDto(
+                tour.Id,
+                tour.Name,
+                tour.Description,
+                tour.Variants.Count,
+                tour.CreatedAt))
             .ToListAsync(cancellationToken);
 
         return ServiceResult<IReadOnlyCollection<TourResponseDto>>.Success(tours);
@@ -140,7 +145,12 @@ public class TourService(AppDbContext context) : ITourService
         var response = await _context.Tours
             .AsNoTracking()
             .Where(savedTour => savedTour.Id == tour.Id)
-            .Select(savedTour => new TourResponseDto(savedTour.Id, savedTour.Name, savedTour.Description, savedTour.CreatedAt))
+            .Select(savedTour => new TourResponseDto(
+                savedTour.Id,
+                savedTour.Name,
+                savedTour.Description,
+                savedTour.Variants.Count,
+                savedTour.CreatedAt))
             .FirstAsync(cancellationToken);
 
         return ServiceResult<TourResponseDto>.Success(response);

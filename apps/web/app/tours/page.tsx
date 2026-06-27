@@ -17,6 +17,9 @@ export default async function Tours() {
             <li key={tour.id}>
               <h3>
                 <Link href={`/tours/${tour.id}`}>{tour.name}</Link>
+                {Number(tour.variantCount) > 1
+                  ? ` (${tour.variantCount} variants)`
+                  : null}
               </h3>
               {tour.description ? <p>{tour.description}</p> : null}
             </li>
