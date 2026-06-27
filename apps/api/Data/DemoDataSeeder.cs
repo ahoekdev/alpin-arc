@@ -104,8 +104,13 @@ public static class DemoDataSeeder
 
         if (variant is null)
         {
-            variant = new TourVariant { TourId = tour.Id, Name = DefaultVariantName };
+            variant = new TourVariant { TourId = tour.Id, Name = DefaultVariantName, IsPrimary = true };
             context.TourVariants.Add(variant);
+            context.SaveChanges();
+        }
+        else if (!variant.IsPrimary)
+        {
+            variant.IsPrimary = true;
             context.SaveChanges();
         }
 
@@ -135,8 +140,13 @@ public static class DemoDataSeeder
 
         if (variant is null)
         {
-            variant = new TourVariant { TourId = tour.Id, Name = DefaultVariantName };
+            variant = new TourVariant { TourId = tour.Id, Name = DefaultVariantName, IsPrimary = true };
             context.TourVariants.Add(variant);
+            await context.SaveChangesAsync(cancellationToken);
+        }
+        else if (!variant.IsPrimary)
+        {
+            variant.IsPrimary = true;
             await context.SaveChangesAsync(cancellationToken);
         }
 

@@ -22,6 +22,7 @@ public class TourVariantService(AppDbContext context) : ITourVariantService
                 v.Id,
                 new TourSummaryDto(v.Tour.Id, v.Tour.Name),
                 v.Name,
+                v.IsPrimary,
                 v.CreatedAt,
                 v.Stages
                     .OrderBy(s => s.Order)
@@ -30,7 +31,8 @@ public class TourVariantService(AppDbContext context) : ITourVariantService
                         new TourVariantSummaryDto(
                             s.TourVariant.Id,
                             s.TourVariant.TourId,
-                            s.TourVariant.Name),
+                            s.TourVariant.Name,
+                            s.TourVariant.IsPrimary),
                         new StageResponseDto(
                             s.Stage.Id,
                             new LodgeSummaryDto(s.Stage.StartLodge.Id, s.Stage.StartLodge.Name),
@@ -71,7 +73,8 @@ public class TourVariantService(AppDbContext context) : ITourVariantService
                 new TourVariantSummaryDto(
                     s.TourVariant.Id,
                     s.TourVariant.TourId,
-                    s.TourVariant.Name),
+                    s.TourVariant.Name,
+                    s.TourVariant.IsPrimary),
                 new StageResponseDto(
                     s.Stage.Id,
                     new LodgeSummaryDto(s.Stage.StartLodge.Id, s.Stage.StartLodge.Name),
@@ -97,6 +100,7 @@ public class TourVariantService(AppDbContext context) : ITourVariantService
 
         tourVariant.TourId = request.TourId;
         tourVariant.Name = request.Name;
+        tourVariant.IsPrimary = request.IsPrimary;
 
         try
         {
@@ -116,6 +120,7 @@ public class TourVariantService(AppDbContext context) : ITourVariantService
         {
             TourId = request.TourId,
             Name = request.Name,
+            IsPrimary = request.IsPrimary,
         };
 
         _context.TourVariants.Add(tourVariant);
@@ -136,6 +141,7 @@ public class TourVariantService(AppDbContext context) : ITourVariantService
                 savedTourVariant.Id,
                 new TourSummaryDto(savedTourVariant.Tour.Id, savedTourVariant.Tour.Name),
                 savedTourVariant.Name,
+                savedTourVariant.IsPrimary,
                 savedTourVariant.CreatedAt))
             .FirstAsync(cancellationToken);
 

@@ -65,7 +65,8 @@ public class TourVariantStageService(AppDbContext context) : ITourVariantStageSe
                 new TourVariantSummaryDto(
                     savedTourVariantStage.TourVariant.Id,
                     savedTourVariantStage.TourVariant.TourId,
-                    savedTourVariantStage.TourVariant.Name),
+                    savedTourVariantStage.TourVariant.Name,
+                    savedTourVariantStage.TourVariant.IsPrimary),
                 new StageResponseDto(
                     savedTourVariantStage.Stage.Id,
                     new LodgeSummaryDto(savedTourVariantStage.Stage.StartLodge.Id, savedTourVariantStage.Stage.StartLodge.Name),

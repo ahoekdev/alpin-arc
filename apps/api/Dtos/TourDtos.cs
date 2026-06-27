@@ -24,6 +24,7 @@ public record TourDetailVariantDto(
     long Id,
     long TourId,
     string Name,
+    bool IsPrimary,
     int TotalDistanceMeters,
     int TotalDurationMinutes,
     int StageCount);

@@ -13,7 +13,8 @@ Content-Type: application/json
 
 {
   "tourId": {{tourId}},
-  "name": "Normal"
+  "name": "Normal",
+  "isPrimary": false
 }
 
 ###
@@ -23,7 +24,8 @@ Content-Type: application/json
 
 {
   "tourId": {{tourId}},
-  "name": "Alpine"
+  "name": "Alpine",
+  "isPrimary": true
 }
 
 ###

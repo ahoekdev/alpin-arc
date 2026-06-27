@@ -50,6 +50,7 @@ public class TourService(AppDbContext context) : ITourService
                         variant.Id,
                         variant.TourId,
                         variant.Name,
+                        variant.IsPrimary,
                         variant.Stages.Sum(stage => stage.Stage.DistanceMeters),
                         variant.Stages.Sum(stage => stage.Stage.DurationMinutes),
                         variant.Stages.Count))
@@ -83,6 +84,7 @@ public class TourService(AppDbContext context) : ITourService
                 variant.Id,
                 new TourSummaryDto(variant.Tour.Id, variant.Tour.Name),
                 variant.Name,
+                variant.IsPrimary,
                 variant.CreatedAt))
             .ToListAsync(cancellationToken);
 

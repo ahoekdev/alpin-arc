@@ -55,6 +55,7 @@ public class AppDbContext : DbContext
         {
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Name).IsRequired().HasMaxLength(200).HasColumnType("citext");
+            entity.Property(e => e.IsPrimary).IsRequired().HasDefaultValue(false);
             entity.Property(e => e.CreatedAt).HasDefaultValueSql("NOW()");
 
             entity.HasIndex(e => new { e.TourId, e.Name }).IsUnique();
