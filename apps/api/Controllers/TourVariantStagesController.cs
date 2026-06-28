@@ -11,6 +11,8 @@ namespace api.Controllers
         private readonly ITourVariantStageService _tourVariantStageService = tourVariantStageService;
 
         [HttpPut("{id}", Name = "updateTourVariantStage")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> PutTourVariantStage(long id, TourVariantStageRequestDto request, CancellationToken cancellationToken)
         {
             var result = await _tourVariantStageService.UpdateTourVariantStageAsync(id, request, cancellationToken);
@@ -32,6 +34,8 @@ namespace api.Controllers
         }
 
         [HttpDelete("{id}", Name = "deleteTourVariantStage")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteTourVariantStage(long id, CancellationToken cancellationToken)
         {
             var result = await _tourVariantStageService.DeleteTourVariantStageAsync(id, cancellationToken);

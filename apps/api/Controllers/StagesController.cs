@@ -19,6 +19,8 @@ namespace api.Controllers
         }
 
         [HttpGet("{id}", Name = "getStageById")]
+        [ProducesResponseType(typeof(StageResponseDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<StageResponseDto>> GetStage(long id, CancellationToken cancellationToken)
         {
             var result = await _stageService.GetStageAsync(id, cancellationToken);
@@ -27,6 +29,8 @@ namespace api.Controllers
         }
 
         [HttpPut("{id}", Name = "updateStage")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> PutStage(long id, StageRequestDto request, CancellationToken cancellationToken)
         {
             var result = await _stageService.UpdateStageAsync(id, request, cancellationToken);
@@ -48,6 +52,8 @@ namespace api.Controllers
         }
 
         [HttpDelete("{id}", Name = "deleteStage")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteStage(long id, CancellationToken cancellationToken)
         {
             var result = await _stageService.DeleteStageAsync(id, cancellationToken);

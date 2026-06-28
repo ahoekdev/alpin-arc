@@ -13,12 +13,13 @@ type LodgePageProps = {
 
 export default async function Lodge({ params }: LodgePageProps) {
   const { id } = await params;
-  const { data: lodge } = await getLodgeById(id);
+  const response = await getLodgeById(id);
 
-  if (!lodge) {
+  if (response.status === 404) {
     notFound();
   }
 
+  const lodge = response.data;
   const { stages, tours } = lodge;
 
   return (

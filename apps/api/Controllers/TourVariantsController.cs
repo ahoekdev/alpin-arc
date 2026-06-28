@@ -11,6 +11,8 @@ namespace api.Controllers
         private readonly ITourVariantService _tourVariantService = tourVariantService;
 
         [HttpGet("{id}", Name = "getTourVariantById")]
+        [ProducesResponseType(typeof(TourVariantDetailResponseDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<TourVariantDetailResponseDto>> GetTourVariant(long id, CancellationToken cancellationToken)
         {
             var result = await _tourVariantService.GetTourVariantAsync(id, cancellationToken);
@@ -19,6 +21,8 @@ namespace api.Controllers
         }
 
         [HttpGet("{id}/stages", Name = "getTourVariantStages")]
+        [ProducesResponseType(typeof(IReadOnlyCollection<TourVariantStageResponseDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<IReadOnlyCollection<TourVariantStageResponseDto>>> GetTourVariantStages(long id, CancellationToken cancellationToken)
         {
             var result = await _tourVariantService.GetTourVariantStagesAsync(id, cancellationToken);
@@ -27,6 +31,8 @@ namespace api.Controllers
         }
 
         [HttpPut("{id}", Name = "updateTourVariant")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> PutTourVariant(long id, TourVariantRequestDto request, CancellationToken cancellationToken)
         {
             var result = await _tourVariantService.UpdateTourVariantAsync(id, request, cancellationToken);
@@ -48,6 +54,8 @@ namespace api.Controllers
         }
 
         [HttpDelete("{id}", Name = "deleteTourVariant")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteTourVariant(long id, CancellationToken cancellationToken)
         {
             var result = await _tourVariantService.DeleteTourVariantAsync(id, cancellationToken);

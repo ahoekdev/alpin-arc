@@ -12,11 +12,13 @@ type TourPageProps = {
 
 export default async function Tour({ params }: TourPageProps) {
   const { id } = await params;
-  const { data: tour } = await getTourById(id);
+  const response = await getTourById(id);
 
-  if (!tour) {
+  if (response.status === 404) {
     notFound();
   }
+
+  const tour = response.data;
 
   return (
     <PageContainer>

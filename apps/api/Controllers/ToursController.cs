@@ -19,6 +19,8 @@ namespace api.Controllers
         }
 
         [HttpGet("{id}", Name = "getTourById")]
+        [ProducesResponseType(typeof(TourDetailResponseDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<TourDetailResponseDto>> GetTour(long id, CancellationToken cancellationToken)
         {
             var result = await _tourService.GetTourAsync(id, cancellationToken);
@@ -27,6 +29,8 @@ namespace api.Controllers
         }
 
         [HttpGet("{id}/variants", Name = "getTourVariants")]
+        [ProducesResponseType(typeof(IReadOnlyCollection<TourVariantResponseDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<IReadOnlyCollection<TourVariantResponseDto>>> GetTourVariants(long id, CancellationToken cancellationToken)
         {
             var result = await _tourService.GetTourVariantsAsync(id, cancellationToken);
@@ -35,6 +39,8 @@ namespace api.Controllers
         }
 
         [HttpPut("{id}", Name = "updateTour")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> PutTour(long id, TourRequestDto request, CancellationToken cancellationToken)
         {
             var result = await _tourService.UpdateTourAsync(id, request, cancellationToken);
@@ -56,6 +62,8 @@ namespace api.Controllers
         }
 
         [HttpDelete("{id}", Name = "deleteTour")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteTour(long id, CancellationToken cancellationToken)
         {
             var result = await _tourService.DeleteTourAsync(id, cancellationToken);

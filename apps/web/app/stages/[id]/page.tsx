@@ -11,11 +11,13 @@ type StagePageProps = {
 
 export default async function Stage({ params }: StagePageProps) {
   const { id } = await params;
-  const { data: stage } = await getStageById(id);
+  const response = await getStageById(id);
 
-  if (!stage) {
+  if (response.status === 404) {
     notFound();
   }
+
+  const stage = response.data;
 
   return (
     <PageContainer>

@@ -13,12 +13,13 @@ type TourVariantPageProps = {
 export default async function TourVariant({ params }: TourVariantPageProps) {
   const { id: variantId } = await params;
 
-  const { data: variant } = await getTourVariantById(variantId);
+  const response = await getTourVariantById(variantId);
 
-  if (!variant) {
+  if (response.status === 404) {
     notFound();
   }
 
+  const variant = response.data;
   const { name, description, stages, id, tour } = variant;
 
   return (

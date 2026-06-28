@@ -19,6 +19,8 @@ namespace api.Controllers
         }
 
         [HttpGet("{id}", Name = "getLodgeById")]
+        [ProducesResponseType(typeof(LodgeDetailDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<LodgeDetailDto>> GetLodge(long id, CancellationToken cancellationToken)
         {
             var result = await _lodgeService.GetLodgeAsync(id, cancellationToken);
