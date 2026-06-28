@@ -18,25 +18,25 @@ export function TourVariantList({ variants }: TourVariantListProps) {
   }
 
   return (
-    <ul>
+    <ul className="space-y-3">
       {variants.map((variant) => {
         const description = variant.description || variant.tour.description;
 
         return (
-          <li key={variant.id}>
-            <h3>
+          <li key={variant.id} className="border-b border-border pb-3">
+            <p className="font-medium">
               <Link href={`/tour-variants/${variant.id}`}>
                 {getVariantTitle(variant)}
               </Link>
-            </h3>
-            <p>
+            </p>
+            <p className="text-sm text-muted-foreground">
               Part of{" "}
               <Link href={`/tours/${variant.tour.id}`}>
                 {variant.tour.name}
               </Link>
             </p>
-            {description && <p>{description}</p>}
-            <p>
+            {description && <p className="mt-1">{description}</p>}
+            <p className="mt-1 text-sm text-muted-foreground">
               {variant.stageCount} stages, {variant.totalDurationMinutes} min,{" "}
               {variant.totalDistanceMeters} m
             </p>
