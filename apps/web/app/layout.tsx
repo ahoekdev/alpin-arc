@@ -1,17 +1,15 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
 import SiteHeader from "@/components/SiteHeader";
+import { cn } from "@/lib/utils";
+import type { Metadata } from "next";
+import { Noto_Sans, Playfair_Display } from "next/font/google";
+import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const playfairDisplayHeading = Playfair_Display({
   subsets: ["latin"],
+  variable: "--font-heading",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+const notoSans = Noto_Sans({ subsets: ["latin"], variable: "--font-sans" });
 
 export const metadata: Metadata = {
   title: "AlpinArc",
@@ -26,7 +24,13 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={cn(
+        "h-full",
+        "antialiased",
+        "font-sans",
+        notoSans.variable,
+        playfairDisplayHeading.variable,
+      )}
     >
       <body className="min-h-full flex flex-col">
         <SiteHeader />
