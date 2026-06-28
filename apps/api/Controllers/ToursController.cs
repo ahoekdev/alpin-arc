@@ -10,14 +10,6 @@ namespace api.Controllers
     {
         private readonly ITourService _tourService = tourService;
 
-        [HttpGet(Name = "getTours")]
-        public async Task<ActionResult<IReadOnlyCollection<TourResponseDto>>> GetTours([FromQuery] int? limit, CancellationToken cancellationToken)
-        {
-            var result = await _tourService.GetToursAsync(limit, cancellationToken);
-
-            return this.ToActionResult(result);
-        }
-
         [HttpGet("{id}", Name = "getTourById")]
         [ProducesResponseType(typeof(TourDetailResponseDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -26,49 +18,6 @@ namespace api.Controllers
             var result = await _tourService.GetTourAsync(id, cancellationToken);
 
             return this.ToActionResult(result);
-        }
-
-        [HttpGet("{id}/variants", Name = "getTourVariantsByTourId")]
-        [ProducesResponseType(typeof(IReadOnlyCollection<TourVariantResponseDto>), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<IReadOnlyCollection<TourVariantResponseDto>>> GetTourVariantsByTourId(long id, CancellationToken cancellationToken)
-        {
-            var result = await _tourService.GetTourVariantsAsync(id, cancellationToken);
-
-            return this.ToActionResult(result);
-        }
-
-        [HttpPut("{id}", Name = "updateTour")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> PutTour(long id, TourRequestDto request, CancellationToken cancellationToken)
-        {
-            var result = await _tourService.UpdateTourAsync(id, request, cancellationToken);
-
-            return this.ToNoContentActionResult(result);
-        }
-
-        [HttpPost(Name = "createTour")]
-        public async Task<ActionResult<TourResponseDto>> PostTour(TourRequestDto request, CancellationToken cancellationToken)
-        {
-            var result = await _tourService.CreateTourAsync(request, cancellationToken);
-
-            if (result.Succeeded)
-            {
-                return CreatedAtAction(nameof(GetTour), new { id = result.Value.Id }, result.Value);
-            }
-
-            return this.ToActionResult(result);
-        }
-
-        [HttpDelete("{id}", Name = "deleteTour")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> DeleteTour(long id, CancellationToken cancellationToken)
-        {
-            var result = await _tourService.DeleteTourAsync(id, cancellationToken);
-
-            return this.ToNoContentActionResult(result);
         }
     }
 }

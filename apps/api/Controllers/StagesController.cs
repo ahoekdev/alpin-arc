@@ -28,37 +28,5 @@ namespace api.Controllers
             return this.ToActionResult(result);
         }
 
-        [HttpPut("{id}", Name = "updateStage")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> PutStage(long id, StageRequestDto request, CancellationToken cancellationToken)
-        {
-            var result = await _stageService.UpdateStageAsync(id, request, cancellationToken);
-
-            return this.ToNoContentActionResult(result);
-        }
-
-        [HttpPost(Name = "createStage")]
-        public async Task<ActionResult<StageResponseDto>> PostStage(StageRequestDto request, CancellationToken cancellationToken)
-        {
-            var result = await _stageService.CreateStageAsync(request, cancellationToken);
-
-            if (result.Succeeded)
-            {
-                return CreatedAtAction(nameof(GetStage), new { id = result.Value.Id }, result.Value);
-            }
-
-            return this.ToActionResult(result);
-        }
-
-        [HttpDelete("{id}", Name = "deleteStage")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> DeleteStage(long id, CancellationToken cancellationToken)
-        {
-            var result = await _stageService.DeleteStageAsync(id, cancellationToken);
-
-            return this.ToNoContentActionResult(result);
-        }
     }
 }

@@ -10,7 +10,6 @@ builder.Services.AddScoped<ILodgeService, LodgeService>();
 builder.Services.AddScoped<IStageService, StageService>();
 builder.Services.AddScoped<ITourService, TourService>();
 builder.Services.AddScoped<ITourVariantService, TourVariantService>();
-builder.Services.AddScoped<ITourVariantStageService, TourVariantStageService>();
 builder.Services.AddOpenApi();
 
 builder.Services.AddDbContext<AppDbContext>(

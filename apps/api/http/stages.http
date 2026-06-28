@@ -11,31 +11,3 @@ Accept: application/json
 
 GET {{api_HostAddress}}/api/stages/{{stageId}}
 Accept: application/json
-
-###
-
-POST {{api_HostAddress}}/api/stages
-Content-Type: application/json
-
-{
-  "startLodgeId": {{startLodgeId}},
-  "endLodgeId": {{endLodgeId}},
-  "durationMinutes": 240,
-  "distanceMeters": 9000
-}
-
-###
-
-PUT {{api_HostAddress}}/api/stages/{{stageId}}
-Content-Type: application/json
-
-{
-  "startLodgeId": {{startLodgeId}},
-  "endLodgeId": {{endLodgeId}},
-  "durationMinutes": 255,
-  "distanceMeters": 9200
-}
-
-###
-
-DELETE {{api_HostAddress}}/api/stages/{{stageId}}
