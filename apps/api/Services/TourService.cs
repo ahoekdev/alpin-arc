@@ -89,10 +89,17 @@ public class TourService(AppDbContext context) : ITourService
             .OrderBy(variant => variant.Name)
             .Select(variant => new TourVariantResponseDto(
                 variant.Id,
-                new TourSummaryDto(variant.Tour.Id, variant.Tour.Name, variant.Tour.Description),
+                new TourSummaryDto(
+                    variant.Tour.Id,
+                    variant.Tour.Name,
+                    variant.Tour.Description,
+                    variant.Tour.Variants.Count),
                 variant.Name,
                 variant.Description,
                 variant.IsPrimary,
+                variant.Stages.Sum(stage => (int?)stage.Stage.DistanceMeters) ?? 0,
+                variant.Stages.Sum(stage => (int?)stage.Stage.DurationMinutes) ?? 0,
+                variant.Stages.Count,
                 variant.CreatedAt))
             .ToListAsync(cancellationToken);
 

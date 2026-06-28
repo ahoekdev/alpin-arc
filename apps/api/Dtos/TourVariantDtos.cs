@@ -23,6 +23,9 @@ public record TourVariantResponseDto(
     string Name,
     string Description,
     bool IsPrimary,
+    int TotalDistanceMeters,
+    int TotalDurationMinutes,
+    int StageCount,
     DateTime CreatedAt);
 
 public record TourVariantSummaryDto(

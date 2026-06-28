@@ -10,6 +10,17 @@ namespace api.Controllers
     {
         private readonly ITourVariantService _tourVariantService = tourVariantService;
 
+        [HttpGet(Name = "getTourVariants")]
+        [ProducesResponseType(typeof(IReadOnlyCollection<TourVariantResponseDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<IReadOnlyCollection<TourVariantResponseDto>>> GetTourVariants([FromQuery] int? limit, [FromQuery] long? lodgeId, CancellationToken cancellationToken)
+        {
+            var result = await _tourVariantService.GetTourVariantsAsync(limit, lodgeId, cancellationToken);
+
+            return this.ToActionResult(result);
+        }
+
         [HttpGet("{id}", Name = "getTourVariantById")]
         [ProducesResponseType(typeof(TourVariantDetailResponseDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]

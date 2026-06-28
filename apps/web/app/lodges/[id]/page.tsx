@@ -1,9 +1,10 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { PageContainer } from "@/components/PageContainer";
 import { StageList } from "@/components/StageList";
+import { TourVariantList } from "@/components/TourVariantList";
 import { getLodgeById } from "@/lib/api/generated/orval/lodges/lodges";
+import { getTourVariants } from "@/lib/api/generated/orval/tour-variants/tour-variants";
 
 type LodgePageProps = {
   params: Promise<{
@@ -13,14 +14,23 @@ type LodgePageProps = {
 
 export default async function Lodge({ params }: LodgePageProps) {
   const { id } = await params;
-  const response = await getLodgeById(id);
+  const [lodgeResponse, tourVariantsResponse] = await Promise.all([
+    getLodgeById(id),
+    getTourVariants({ lodgeId: id }),
+  ]);
 
-  if (response.status === 404) {
+  if (lodgeResponse.status === 404 || tourVariantsResponse.status === 404) {
     notFound();
   }
 
-  const lodge = response.data;
-  const { stages, tours } = lodge;
+  if (tourVariantsResponse.status !== 200) {
+    throw new Error(
+      `Failed to load tour variants: ${tourVariantsResponse.status}`,
+    );
+  }
+
+  const lodge = lodgeResponse.data;
+  const { stages } = lodge;
 
   return (
     <PageContainer>
@@ -34,18 +44,7 @@ export default async function Lodge({ params }: LodgePageProps) {
       <StageList stages={stages} />
 
       <h2>Tours</h2>
-      {!tours.length ? (
-        <p>No tours found.</p>
-      ) : (
-        <ul>
-          {tours.map(({ id, name, description }) => (
-            <li key={id}>
-              <Link href={`/tours/${id}`}>{name}</Link>
-              {description ? <p>{description}</p> : null}
-            </li>
-          ))}
-        </ul>
-      )}
+      <TourVariantList variants={tourVariantsResponse.data} />
     </PageContainer>
   );
 }

@@ -28,10 +28,10 @@ namespace api.Controllers
             return this.ToActionResult(result);
         }
 
-        [HttpGet("{id}/variants", Name = "getTourVariants")]
+        [HttpGet("{id}/variants", Name = "getTourVariantsByTourId")]
         [ProducesResponseType(typeof(IReadOnlyCollection<TourVariantResponseDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<IReadOnlyCollection<TourVariantResponseDto>>> GetTourVariants(long id, CancellationToken cancellationToken)
+        public async Task<ActionResult<IReadOnlyCollection<TourVariantResponseDto>>> GetTourVariantsByTourId(long id, CancellationToken cancellationToken)
         {
             var result = await _tourService.GetTourVariantsAsync(id, cancellationToken);
 

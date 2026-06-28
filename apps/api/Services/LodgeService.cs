@@ -87,11 +87,12 @@ public class LodgeService(AppDbContext context) : ILodgeService
             {
                 tvs.TourVariant.Tour.Id,
                 tvs.TourVariant.Tour.Name,
-                tvs.TourVariant.Tour.Description
+                tvs.TourVariant.Tour.Description,
+                VariantCount = tvs.TourVariant.Tour.Variants.Count
             })
             .Distinct()
             .OrderBy(t => t.Name)
-            .Select(t => new TourSummaryDto(t.Id, t.Name, t.Description))
+            .Select(t => new TourSummaryDto(t.Id, t.Name, t.Description, t.VariantCount))
             .ToListAsync(cancellationToken);
     }
 

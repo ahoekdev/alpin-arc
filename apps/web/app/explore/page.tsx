@@ -2,16 +2,35 @@ import Link from "next/link";
 
 import { PageContainer } from "@/components/PageContainer";
 import { StageList } from "@/components/StageList";
+import { TourVariantList } from "@/components/TourVariantList";
 import { getLodges } from "@/lib/api/generated/orval/lodges/lodges";
 import { getStages } from "@/lib/api/generated/orval/stages/stages";
-import { getTours } from "@/lib/api/generated/orval/tours/tours";
+import { getTourVariants } from "@/lib/api/generated/orval/tour-variants/tour-variants";
 
 export default async function Explore() {
-  const [lodges, stages, tours] = await Promise.all([
-    getLodges({ limit: 3 }).then((res) => res.data),
-    getStages({ limit: 3 }).then((res) => res.data),
-    getTours({ limit: 3 }).then((res) => res.data),
-  ]);
+  const [lodgesResponse, stagesResponse, tourVariantsResponse] =
+    await Promise.all([
+      getLodges({ limit: 3 }),
+      getStages({ limit: 3 }),
+      getTourVariants({ limit: 3 }),
+    ]);
+
+  if (lodgesResponse.status !== 200) {
+    throw new Error(`Failed to load lodges: ${lodgesResponse.status}`);
+  }
+
+  if (stagesResponse.status !== 200) {
+    throw new Error(`Failed to load stages: ${stagesResponse.status}`);
+  }
+
+  if (tourVariantsResponse.status !== 200) {
+    throw new Error(
+      `Failed to load tour variants: ${tourVariantsResponse.status}`,
+    );
+  }
+
+  const lodges = lodgesResponse.data;
+  const stages = stagesResponse.data;
 
   return (
     <PageContainer>
@@ -41,18 +60,7 @@ export default async function Explore() {
 
       <section>
         <h2>Tours</h2>
-        {tours.length === 0 ? (
-          <p>No tours found.</p>
-        ) : (
-          <ul>
-            {tours.map((tour) => (
-              <li key={tour.id}>
-                <Link href={`/tours/${tour.id}`}>{tour.name}</Link>
-                {tour.description ? <p>{tour.description}</p> : null}
-              </li>
-            ))}
-          </ul>
-        )}
+        <TourVariantList variants={tourVariantsResponse.data} />
         <Link href="/tours">View all tours</Link>
       </section>
     </PageContainer>

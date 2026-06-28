@@ -13,6 +13,68 @@ public class TourVariantService(AppDbContext context) : ITourVariantService
 
     private readonly AppDbContext _context = context;
 
+    public async Task<ServiceResult<IReadOnlyCollection<TourVariantResponseDto>>> GetTourVariantsAsync(
+        int? limit,
+        long? lodgeId,
+        CancellationToken cancellationToken)
+    {
+        if (limit is <= 0 or > 100)
+        {
+            return ServiceResult<IReadOnlyCollection<TourVariantResponseDto>>.BadRequest("Limit must be between 1 and 100.");
+        }
+
+        if (lodgeId.HasValue)
+        {
+            var lodgeExists = await _context.Lodges
+                .AsNoTracking()
+                .AnyAsync(lodge => lodge.Id == lodgeId.Value, cancellationToken);
+
+            if (!lodgeExists)
+            {
+                return ServiceResult<IReadOnlyCollection<TourVariantResponseDto>>.NotFound("Lodge does not exist.");
+            }
+        }
+
+        IQueryable<TourVariant> query = _context.TourVariants
+            .AsNoTracking();
+
+        if (lodgeId.HasValue)
+        {
+            query = query.Where(variant =>
+                variant.Stages.Any(stage =>
+                    stage.Stage.StartLodgeId == lodgeId.Value ||
+                    stage.Stage.EndLodgeId == lodgeId.Value));
+        }
+
+        query = query
+            .OrderBy(variant => variant.Tour.Name)
+            .ThenBy(variant => variant.Name);
+
+        if (limit.HasValue)
+        {
+            query = query.Take(limit.Value);
+        }
+
+        var variants = await query
+            .Select(variant => new TourVariantResponseDto(
+                variant.Id,
+                new TourSummaryDto(
+                    variant.Tour.Id,
+                    variant.Tour.Name,
+                    variant.Tour.Description,
+                    variant.Tour.Variants.Count),
+                variant.Name,
+                variant.Description,
+                variant.IsPrimary,
+                variant.Stages.Sum(stage => (int?)stage.Stage.DistanceMeters) ?? 0,
+                variant.Stages.Sum(stage => (int?)stage.Stage.DurationMinutes) ?? 0,
+                variant.Stages.Count,
+                variant.CreatedAt))
+            .ToListAsync(cancellationToken);
+
+        return ServiceResult<IReadOnlyCollection<TourVariantResponseDto>>.Success(variants);
+    }
+
     public async Task<ServiceResult<TourVariantDetailResponseDto>> GetTourVariantAsync(long id, CancellationToken cancellationToken)
     {
         var tourVariant = await _context.TourVariants
@@ -20,7 +82,7 @@ public class TourVariantService(AppDbContext context) : ITourVariantService
             .Where(v => v.Id == id)
             .Select(v => new TourVariantDetailResponseDto(
                 v.Id,
-                new TourSummaryDto(v.Tour.Id, v.Tour.Name, v.Tour.Description),
+                new TourSummaryDto(v.Tour.Id, v.Tour.Name, v.Tour.Description, v.Tour.Variants.Count),
                 v.Name,
                 v.Description,
                 v.IsPrimary,
@@ -144,10 +206,17 @@ public class TourVariantService(AppDbContext context) : ITourVariantService
             .Where(savedTourVariant => savedTourVariant.Id == tourVariant.Id)
             .Select(savedTourVariant => new TourVariantResponseDto(
                 savedTourVariant.Id,
-                new TourSummaryDto(savedTourVariant.Tour.Id, savedTourVariant.Tour.Name, savedTourVariant.Tour.Description),
+                new TourSummaryDto(
+                    savedTourVariant.Tour.Id,
+                    savedTourVariant.Tour.Name,
+                    savedTourVariant.Tour.Description,
+                    savedTourVariant.Tour.Variants.Count),
                 savedTourVariant.Name,
                 savedTourVariant.Description,
                 savedTourVariant.IsPrimary,
+                savedTourVariant.Stages.Sum(stage => (int?)stage.Stage.DistanceMeters) ?? 0,
+                savedTourVariant.Stages.Sum(stage => (int?)stage.Stage.DurationMinutes) ?? 0,
+                savedTourVariant.Stages.Count,
                 savedTourVariant.CreatedAt))
             .FirstAsync(cancellationToken);
 

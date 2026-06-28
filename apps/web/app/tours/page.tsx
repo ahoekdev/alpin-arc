@@ -1,31 +1,18 @@
-import Link from "next/link";
-
 import { PageContainer } from "@/components/PageContainer";
-import { getTours } from "@/lib/api/generated/orval/tours/tours";
+import { TourVariantList } from "@/components/TourVariantList";
+import { getTourVariants } from "@/lib/api/generated/orval/tour-variants/tour-variants";
 
 export default async function Tours() {
-  const { data: tours } = await getTours();
+  const response = await getTourVariants();
+
+  if (response.status !== 200) {
+    throw new Error(`Failed to load tour variants: ${response.status}`);
+  }
 
   return (
     <PageContainer>
       <h1>Tours</h1>
-      {tours.length === 0 ? (
-        <p>No tours found.</p>
-      ) : (
-        <ul>
-          {tours.map((tour) => (
-            <li key={tour.id}>
-              <h3>
-                <Link href={`/tours/${tour.id}`}>{tour.name}</Link>
-                {Number(tour.variantCount) > 1
-                  ? ` (${tour.variantCount} variants)`
-                  : null}
-              </h3>
-              {tour.description ? <p>{tour.description}</p> : null}
-            </li>
-          ))}
-        </ul>
-      )}
+      <TourVariantList variants={response.data} />
     </PageContainer>
   );
 }

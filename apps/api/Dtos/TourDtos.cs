@@ -36,4 +36,4 @@ public record TourDetailVariantDto(
     int TotalDurationMinutes,
     int StageCount);
 
-public record TourSummaryDto(long Id, string Name, string Description);
+public record TourSummaryDto(long Id, string Name, string Description, int VariantCount);
