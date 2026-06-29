@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { PageContainer } from "@/components/PageContainer";
+import { StageList } from "@/components/StageList";
 import { getTourVariantById } from "@/lib/api/generated/orval/tour-variants/tour-variants";
 
 type TourVariantPageProps = {
@@ -34,22 +35,7 @@ export default async function TourVariant({ params }: TourVariantPageProps) {
       </ul>
 
       <h2>Stages</h2>
-      {!stages.length ? (
-        <p>No stages found.</p>
-      ) : (
-        <ul>
-          {stages.map((variantStage) => (
-            <li key={variantStage.id}>
-              {variantStage.order}.{" "}
-              <Link href={`/stages/${variantStage.stage.id}`}>
-                {`${variantStage.stage.startLodge.name} > ${variantStage.stage.endLodge.name}`}
-              </Link>
-              : {variantStage.stage.durationMinutes} min,{" "}
-              {variantStage.stage.distanceMeters} m
-            </li>
-          ))}
-        </ul>
-      )}
+      <StageList stages={stages.map((variantStage) => variantStage.stage)} />
     </PageContainer>
   );
 }
