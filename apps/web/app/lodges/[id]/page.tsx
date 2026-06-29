@@ -35,8 +35,10 @@ export default async function Lodge({ params }: LodgePageProps) {
   return (
     <PageContainer>
       <h1>{lodge.name}</h1>
+      <p>{lodge.description}</p>
       <ul>
         <li>Id: {lodge.id}</li>
+        <li>Country: {lodge.countryCode}</li>
         <li>Created at: {lodge.createdAt}</li>
       </ul>
 

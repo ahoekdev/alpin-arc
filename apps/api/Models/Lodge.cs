@@ -9,5 +9,11 @@ public class Lodge
     [Required]
     public string Name { get; set; } = String.Empty;
 
+    [Required]
+    public string Description { get; set; } = String.Empty;
+
+    [Required]
+    public string CountryCode { get; set; } = String.Empty;
+
     public DateTime CreatedAt { get; set; }
 }

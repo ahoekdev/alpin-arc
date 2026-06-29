@@ -19,6 +19,8 @@ public class AppDbContext : DbContext
         {
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Name).IsRequired().HasMaxLength(200);
+            entity.Property(e => e.Description).IsRequired().HasMaxLength(2000).HasDefaultValue("");
+            entity.Property(e => e.CountryCode).IsRequired().HasMaxLength(2).IsFixedLength().HasDefaultValue("AT");
             entity.Property(e => e.CreatedAt).HasDefaultValueSql("NOW()");
         });
 

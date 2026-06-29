@@ -26,7 +26,7 @@ public class LodgeService(AppDbContext context) : ILodgeService
         }
 
         var lodges = await query
-            .Select(l => new LodgeSummaryDto(l.Id, l.Name))
+            .Select(l => new LodgeSummaryDto(l.Id, l.Name, l.Description, l.CountryCode))
             .ToListAsync(cancellationToken);
 
         return ServiceResult<IReadOnlyCollection<LodgeSummaryDto>>.Success(lodges);
@@ -41,6 +41,8 @@ public class LodgeService(AppDbContext context) : ILodgeService
             {
                 l.Id,
                 l.Name,
+                l.Description,
+                l.CountryCode,
                 l.CreatedAt,
             })
             .SingleOrDefaultAsync(cancellationToken);
@@ -56,6 +58,8 @@ public class LodgeService(AppDbContext context) : ILodgeService
         return ServiceResult<LodgeDetailDto>.Success(new LodgeDetailDto(
             lodge.Id,
             lodge.Name,
+            lodge.Description,
+            lodge.CountryCode,
             lodge.CreatedAt,
             stages,
             tours));
@@ -70,8 +74,16 @@ public class LodgeService(AppDbContext context) : ILodgeService
             .ThenBy(s => s.EndLodge.Name)
             .Select(s => new StageSummaryDto(
                 s.Id,
-                new LodgeSummaryDto(s.StartLodge.Id, s.StartLodge.Name),
-                new LodgeSummaryDto(s.EndLodge.Id, s.EndLodge.Name),
+                new LodgeSummaryDto(
+                    s.StartLodge.Id,
+                    s.StartLodge.Name,
+                    s.StartLodge.Description,
+                    s.StartLodge.CountryCode),
+                new LodgeSummaryDto(
+                    s.EndLodge.Id,
+                    s.EndLodge.Name,
+                    s.EndLodge.Description,
+                    s.EndLodge.CountryCode),
                 s.DurationMinutes,
                 s.DistanceMeters))
             .ToListAsync(cancellationToken);

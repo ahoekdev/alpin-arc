@@ -95,8 +95,16 @@ public class TourVariantService(AppDbContext context) : ITourVariantService
                             s.TourVariant.IsPrimary),
                         new StageResponseDto(
                             s.Stage.Id,
-                            new LodgeSummaryDto(s.Stage.StartLodge.Id, s.Stage.StartLodge.Name),
-                            new LodgeSummaryDto(s.Stage.EndLodge.Id, s.Stage.EndLodge.Name),
+                            new LodgeSummaryDto(
+                                s.Stage.StartLodge.Id,
+                                s.Stage.StartLodge.Name,
+                                s.Stage.StartLodge.Description,
+                                s.Stage.StartLodge.CountryCode),
+                            new LodgeSummaryDto(
+                                s.Stage.EndLodge.Id,
+                                s.Stage.EndLodge.Name,
+                                s.Stage.EndLodge.Description,
+                                s.Stage.EndLodge.CountryCode),
                             s.Stage.DurationMinutes,
                             s.Stage.DistanceMeters,
                             s.Stage.CreatedAt),

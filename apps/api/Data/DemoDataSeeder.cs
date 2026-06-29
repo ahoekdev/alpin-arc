@@ -8,6 +8,76 @@ public static class DemoDataSeeder
 {
     private const string DefaultVariantName = "Default";
 
+    private static readonly Dictionary<string, LodgeSeed> Lodges = new(StringComparer.Ordinal)
+    {
+        ["Berliner Hütte"] = new(
+            "Historic mountain refuge in the Zillertal Alps and a major overnight stop on the Berliner Höhenweg.",
+            "AT"),
+        ["Bremer Hütte"] = new(
+            "High alpine hut in the Stubai Alps serving the western stages of the Stubaier Höhenweg.",
+            "AT"),
+        ["Dortmunder Hütte"] = new(
+            "Road-accessible hut above Kühtai at the eastern end of the Sellrainer Hüttenrunde.",
+            "AT"),
+        ["Dresdner Hütte"] = new(
+            "Stubai Alps hut near the glacier ski area and a central stop on the Stubaier Höhenweg.",
+            "AT"),
+        ["Franz-Senn-Hütte"] = new(
+            "Large alpine hut in the Oberbergtal used as a gateway to Stubai glacier terrain.",
+            "AT"),
+        ["Friesenberghaus"] = new(
+            "Zillertal Alps hut above the Schlegeis reservoir with links toward Olpererhütte and Gamshütte.",
+            "AT"),
+        ["Furtschaglhaus"] = new(
+            "Remote Zillertal Alps hut above the Schlegeis valley on the route toward Berliner Hütte.",
+            "AT"),
+        ["Gamshütte"] = new(
+            "Mountain hut above Finkenberg and a common starting lodge for the Berliner Höhenweg.",
+            "AT"),
+        ["Greizer Hütte"] = new(
+            "Zillertal Alps refuge in the Floitengrund between Berliner Hütte and Kasseler Hütte.",
+            "AT"),
+        ["Innsbrucker Hütte"] = new(
+            "Stubai Alps hut below the Habicht and the southern endpoint of the Stubaier Höhenweg.",
+            "AT"),
+        ["Karl-von-Edel-Hütte"] = new(
+            "Hut above Mayrhofen marking the eastern end of the Berliner Höhenweg.",
+            "AT"),
+        ["Kasseler Hütte"] = new(
+            "Zillertal Alps hut in the Stillup valley on the high route toward Karl-von-Edel-Hütte.",
+            "AT"),
+        ["Neue Regensburger Hütte"] = new(
+            "Quiet Stubai Alps hut above the Falbesoner valley between Franz-Senn-Hütte and Dresdner Hütte.",
+            "AT"),
+        ["Nürnberger Hütte"] = new(
+            "Traditional Stubai Alps hut on the route from Sulzenau Hütte toward Bremer Hütte.",
+            "AT"),
+        ["Olpererhütte"] = new(
+            "Popular Zillertal Alps hut overlooking the Schlegeis reservoir below the Olperer.",
+            "AT"),
+        ["Pforzheimer Hütte"] = new(
+            "Sellrain mountain hut in the Gleirschtal and a key stop on the Sellrainer Hüttenrunde.",
+            "AT"),
+        ["Potsdamer Hütte"] = new(
+            "Sellrain Alps hut above the Fotschertal and a common entry point to the hut circuit.",
+            "AT"),
+        ["Schweinfurter Hütte"] = new(
+            "Sellrain mountain hut in the Zwieselbachtal between Pforzheimer Hütte and Dortmunder Hütte.",
+            "AT"),
+        ["Starkenburger Hütte"] = new(
+            "Stubai Alps hut above Neustift with wide valley views and access to the Stubaier Höhenweg.",
+            "AT"),
+        ["Sulzenau Hütte"] = new(
+            "Stubai Alps hut below the Sulzenauferner and a short stage from Dresdner Hütte.",
+            "AT"),
+        ["Westfalenhaus"] = new(
+            "Sellrain Alps hut in the Längental connecting Potsdamer Hütte with several route variants.",
+            "AT"),
+        ["Winnebachseehütte"] = new(
+            "Alpine hut above the Winnebachsee used by the higher variant of the Sellrainer Hüttenrunde.",
+            "AT")
+    };
+
     private static readonly TourSeed[] Tours =
     [
         new(
@@ -363,13 +433,26 @@ public static class DemoDataSeeder
     private static Lodge GetOrCreateLodge(AppDbContext context, string name)
     {
         var lodge = context.Lodges.SingleOrDefault(l => l.Name == name);
+        var seed = GetLodgeSeed(name);
 
         if (lodge is not null)
         {
+            if (lodge.Description != seed.Description || lodge.CountryCode != seed.CountryCode)
+            {
+                lodge.Description = seed.Description;
+                lodge.CountryCode = seed.CountryCode;
+                context.SaveChanges();
+            }
+
             return lodge;
         }
 
-        lodge = new Lodge { Name = name };
+        lodge = new Lodge
+        {
+            Name = name,
+            Description = seed.Description,
+            CountryCode = seed.CountryCode
+        };
         context.Lodges.Add(lodge);
         context.SaveChanges();
 
@@ -382,17 +465,37 @@ public static class DemoDataSeeder
         CancellationToken cancellationToken)
     {
         var lodge = await context.Lodges.SingleOrDefaultAsync(l => l.Name == name, cancellationToken);
+        var seed = GetLodgeSeed(name);
 
         if (lodge is not null)
         {
+            if (lodge.Description != seed.Description || lodge.CountryCode != seed.CountryCode)
+            {
+                lodge.Description = seed.Description;
+                lodge.CountryCode = seed.CountryCode;
+                await context.SaveChangesAsync(cancellationToken);
+            }
+
             return lodge;
         }
 
-        lodge = new Lodge { Name = name };
+        lodge = new Lodge
+        {
+            Name = name,
+            Description = seed.Description,
+            CountryCode = seed.CountryCode
+        };
         context.Lodges.Add(lodge);
         await context.SaveChangesAsync(cancellationToken);
 
         return lodge;
+    }
+
+    private static LodgeSeed GetLodgeSeed(string name)
+    {
+        return Lodges.TryGetValue(name, out var seed)
+            ? seed
+            : new LodgeSeed($"Mountain lodge on an Alpine hut-to-hut route: {name}.", "AT");
     }
 
     private sealed record TourSeed(
@@ -411,4 +514,6 @@ public static class DemoDataSeeder
         string EndLodgeName,
         int DurationMinutes,
         int DistanceMeters);
+
+    private sealed record LodgeSeed(string Description, string CountryCode);
 }

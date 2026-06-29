@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { LodgeList } from "@/components/LodgeList";
 import { PageContainer } from "@/components/PageContainer";
 import { StageList } from "@/components/StageList";
 import { TourVariantList } from "@/components/TourVariantList";
@@ -29,32 +30,19 @@ export default async function Explore() {
     );
   }
 
-  const lodges = lodgesResponse.data;
-  const stages = stagesResponse.data;
-
   return (
     <PageContainer>
       <h1>Explore</h1>
 
       <section>
         <h2>Lodges</h2>
-        {lodges.length === 0 ? (
-          <p>No lodges found.</p>
-        ) : (
-          <ul>
-            {lodges.map((lodge) => (
-              <li key={lodge.id}>
-                <Link href={`/lodges/${lodge.id}`}>{lodge.name}</Link>
-              </li>
-            ))}
-          </ul>
-        )}
+        <LodgeList lodges={lodgesResponse.data} />
         <Link href="/lodges">View all lodges</Link>
       </section>
 
       <section>
         <h2>Stages</h2>
-        <StageList stages={stages} />
+        <StageList stages={stagesResponse.data} />
         <Link href="/stages">View all stages</Link>
       </section>
 

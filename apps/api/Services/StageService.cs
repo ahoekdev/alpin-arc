@@ -50,8 +50,16 @@ public class StageService(AppDbContext context) : IStageService
     {
         return query.Select(stage => new StageResponseDto(
                 stage.Id,
-                new LodgeSummaryDto(stage.StartLodge.Id, stage.StartLodge.Name),
-                new LodgeSummaryDto(stage.EndLodge.Id, stage.EndLodge.Name),
+                new LodgeSummaryDto(
+                    stage.StartLodge.Id,
+                    stage.StartLodge.Name,
+                    stage.StartLodge.Description,
+                    stage.StartLodge.CountryCode),
+                new LodgeSummaryDto(
+                    stage.EndLodge.Id,
+                    stage.EndLodge.Name,
+                    stage.EndLodge.Description,
+                    stage.EndLodge.CountryCode),
                 stage.DurationMinutes,
                 stage.DistanceMeters,
                 stage.CreatedAt));
