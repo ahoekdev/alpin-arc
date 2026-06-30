@@ -14,6 +14,7 @@ export async function apiFetch<T>(
   url: string,
   options: RequestInit = {},
 ): Promise<T> {
+  const requestUrl = buildRequestUrl(url);
   const method = (options.method ?? "GET").toUpperCase();
   const headers = new Headers(options.headers);
 
@@ -28,7 +29,7 @@ export async function apiFetch<T>(
     headers.set("Content-Type", "application/json");
   }
 
-  const response = await fetch(url, {
+  const response = await fetch(requestUrl, {
     ...options,
     headers,
     credentials: "same-origin",
@@ -51,6 +52,15 @@ export async function apiFetch<T>(
     status: response.status,
     headers: response.headers,
   } as T;
+}
+
+function buildRequestUrl(url: string): string {
+  if (typeof window !== "undefined") {
+    return url;
+  }
+
+  const baseUrl = process.env.API_BASE_URL ?? "http://localhost:5111";
+  return new URL(url, baseUrl).toString();
 }
 
 function parseBody(body: string | null, contentType: string): unknown {
