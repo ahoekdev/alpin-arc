@@ -1,0 +1,22 @@
+@api_HostAddress = http://localhost:5111
+@lodgeId = 1
+
+###
+
+GET {{api_HostAddress}}/api/me/lodge-favorites
+Accept: application/json
+
+###
+
+GET {{api_HostAddress}}/api/me/lodge-favorites/{{lodgeId}}
+Accept: application/json
+
+###
+
+POST {{api_HostAddress}}/api/me/lodge-favorites/{{lodgeId}}
+X-XSRF-TOKEN: paste-token-from-XSRF-TOKEN-cookie
+
+###
+
+DELETE {{api_HostAddress}}/api/me/lodge-favorites/{{lodgeId}}
+X-XSRF-TOKEN: paste-token-from-XSRF-TOKEN-cookie
