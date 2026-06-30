@@ -1,0 +1,122 @@
+[
+  {
+    "startLodgeName": "Gamshütte",
+    "endLodgeName": "Friesenberghaus",
+    "durationMinutes": 540,
+    "distanceMeters": 14500
+  },
+  {
+    "startLodgeName": "Friesenberghaus",
+    "endLodgeName": "Olpererhütte",
+    "durationMinutes": 150,
+    "distanceMeters": 3900
+  },
+  {
+    "startLodgeName": "Olpererhütte",
+    "endLodgeName": "Furtschaglhaus",
+    "durationMinutes": 240,
+    "distanceMeters": 9800
+  },
+  {
+    "startLodgeName": "Furtschaglhaus",
+    "endLodgeName": "Berliner Hütte",
+    "durationMinutes": 390,
+    "distanceMeters": 11500
+  },
+  {
+    "startLodgeName": "Berliner Hütte",
+    "endLodgeName": "Greizer Hütte",
+    "durationMinutes": 420,
+    "distanceMeters": 10000
+  },
+  {
+    "startLodgeName": "Greizer Hütte",
+    "endLodgeName": "Kasseler Hütte",
+    "durationMinutes": 540,
+    "distanceMeters": 13000
+  },
+  {
+    "startLodgeName": "Kasseler Hütte",
+    "endLodgeName": "Karl-von-Edel-Hütte",
+    "durationMinutes": 540,
+    "distanceMeters": 14000
+  },
+  {
+    "startLodgeName": "Starkenburger Hütte",
+    "endLodgeName": "Franz-Senn-Hütte",
+    "durationMinutes": 420,
+    "distanceMeters": 15000
+  },
+  {
+    "startLodgeName": "Franz-Senn-Hütte",
+    "endLodgeName": "Neue Regensburger Hütte",
+    "durationMinutes": 300,
+    "distanceMeters": 8500
+  },
+  {
+    "startLodgeName": "Neue Regensburger Hütte",
+    "endLodgeName": "Dresdner Hütte",
+    "durationMinutes": 420,
+    "distanceMeters": 12000
+  },
+  {
+    "startLodgeName": "Dresdner Hütte",
+    "endLodgeName": "Sulzenau Hütte",
+    "durationMinutes": 180,
+    "distanceMeters": 4500
+  },
+  {
+    "startLodgeName": "Sulzenau Hütte",
+    "endLodgeName": "Nürnberger Hütte",
+    "durationMinutes": 240,
+    "distanceMeters": 6000
+  },
+  {
+    "startLodgeName": "Nürnberger Hütte",
+    "endLodgeName": "Bremer Hütte",
+    "durationMinutes": 360,
+    "distanceMeters": 7500
+  },
+  {
+    "startLodgeName": "Bremer Hütte",
+    "endLodgeName": "Innsbrucker Hütte",
+    "durationMinutes": 420,
+    "distanceMeters": 9000
+  },
+  {
+    "startLodgeName": "Potsdamer Hütte",
+    "endLodgeName": "Westfalenhaus",
+    "durationMinutes": 300,
+    "distanceMeters": 9000
+  },
+  {
+    "startLodgeName": "Westfalenhaus",
+    "endLodgeName": "Pforzheimer Hütte",
+    "durationMinutes": 360,
+    "distanceMeters": 11000
+  },
+  {
+    "startLodgeName": "Pforzheimer Hütte",
+    "endLodgeName": "Schweinfurter Hütte",
+    "durationMinutes": 240,
+    "distanceMeters": 9000
+  },
+  {
+    "startLodgeName": "Schweinfurter Hütte",
+    "endLodgeName": "Dortmunder Hütte",
+    "durationMinutes": 300,
+    "distanceMeters": 12000
+  },
+  {
+    "startLodgeName": "Westfalenhaus",
+    "endLodgeName": "Winnebachseehütte",
+    "durationMinutes": 360,
+    "distanceMeters": 10000
+  },
+  {
+    "startLodgeName": "Winnebachseehütte",
+    "endLodgeName": "Pforzheimer Hütte",
+    "durationMinutes": 300,
+    "distanceMeters": 9000
+  }
+]

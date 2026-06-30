@@ -1,0 +1,163 @@
+[
+  {
+    "tourName": "Berliner Höhenweg",
+    "tourVariantName": "Default",
+    "order": 1,
+    "startLodgeName": "Gamshütte",
+    "endLodgeName": "Friesenberghaus"
+  },
+  {
+    "tourName": "Berliner Höhenweg",
+    "tourVariantName": "Default",
+    "order": 2,
+    "startLodgeName": "Friesenberghaus",
+    "endLodgeName": "Olpererhütte"
+  },
+  {
+    "tourName": "Berliner Höhenweg",
+    "tourVariantName": "Default",
+    "order": 3,
+    "startLodgeName": "Olpererhütte",
+    "endLodgeName": "Furtschaglhaus"
+  },
+  {
+    "tourName": "Berliner Höhenweg",
+    "tourVariantName": "Default",
+    "order": 4,
+    "startLodgeName": "Furtschaglhaus",
+    "endLodgeName": "Berliner Hütte"
+  },
+  {
+    "tourName": "Berliner Höhenweg",
+    "tourVariantName": "Default",
+    "order": 5,
+    "startLodgeName": "Berliner Hütte",
+    "endLodgeName": "Greizer Hütte"
+  },
+  {
+    "tourName": "Berliner Höhenweg",
+    "tourVariantName": "Default",
+    "order": 6,
+    "startLodgeName": "Greizer Hütte",
+    "endLodgeName": "Kasseler Hütte"
+  },
+  {
+    "tourName": "Berliner Höhenweg",
+    "tourVariantName": "Default",
+    "order": 7,
+    "startLodgeName": "Kasseler Hütte",
+    "endLodgeName": "Karl-von-Edel-Hütte"
+  },
+  {
+    "tourName": "Stubaier Höhenweg",
+    "tourVariantName": "Default",
+    "order": 1,
+    "startLodgeName": "Starkenburger Hütte",
+    "endLodgeName": "Franz-Senn-Hütte"
+  },
+  {
+    "tourName": "Stubaier Höhenweg",
+    "tourVariantName": "Default",
+    "order": 2,
+    "startLodgeName": "Franz-Senn-Hütte",
+    "endLodgeName": "Neue Regensburger Hütte"
+  },
+  {
+    "tourName": "Stubaier Höhenweg",
+    "tourVariantName": "Default",
+    "order": 3,
+    "startLodgeName": "Neue Regensburger Hütte",
+    "endLodgeName": "Dresdner Hütte"
+  },
+  {
+    "tourName": "Stubaier Höhenweg",
+    "tourVariantName": "Default",
+    "order": 4,
+    "startLodgeName": "Dresdner Hütte",
+    "endLodgeName": "Sulzenau Hütte"
+  },
+  {
+    "tourName": "Stubaier Höhenweg",
+    "tourVariantName": "Default",
+    "order": 5,
+    "startLodgeName": "Sulzenau Hütte",
+    "endLodgeName": "Nürnberger Hütte"
+  },
+  {
+    "tourName": "Stubaier Höhenweg",
+    "tourVariantName": "Default",
+    "order": 6,
+    "startLodgeName": "Nürnberger Hütte",
+    "endLodgeName": "Bremer Hütte"
+  },
+  {
+    "tourName": "Stubaier Höhenweg",
+    "tourVariantName": "Default",
+    "order": 7,
+    "startLodgeName": "Bremer Hütte",
+    "endLodgeName": "Innsbrucker Hütte"
+  },
+  {
+    "tourName": "Sellrainer Hüttenrunde",
+    "tourVariantName": "Normal",
+    "order": 1,
+    "startLodgeName": "Potsdamer Hütte",
+    "endLodgeName": "Westfalenhaus"
+  },
+  {
+    "tourName": "Sellrainer Hüttenrunde",
+    "tourVariantName": "Normal",
+    "order": 2,
+    "startLodgeName": "Westfalenhaus",
+    "endLodgeName": "Pforzheimer Hütte"
+  },
+  {
+    "tourName": "Sellrainer Hüttenrunde",
+    "tourVariantName": "Normal",
+    "order": 3,
+    "startLodgeName": "Pforzheimer Hütte",
+    "endLodgeName": "Schweinfurter Hütte"
+  },
+  {
+    "tourName": "Sellrainer Hüttenrunde",
+    "tourVariantName": "Normal",
+    "order": 4,
+    "startLodgeName": "Schweinfurter Hütte",
+    "endLodgeName": "Dortmunder Hütte"
+  },
+  {
+    "tourName": "Sellrainer Hüttenrunde",
+    "tourVariantName": "Alpine",
+    "order": 1,
+    "startLodgeName": "Potsdamer Hütte",
+    "endLodgeName": "Westfalenhaus"
+  },
+  {
+    "tourName": "Sellrainer Hüttenrunde",
+    "tourVariantName": "Alpine",
+    "order": 2,
+    "startLodgeName": "Westfalenhaus",
+    "endLodgeName": "Winnebachseehütte"
+  },
+  {
+    "tourName": "Sellrainer Hüttenrunde",
+    "tourVariantName": "Alpine",
+    "order": 3,
+    "startLodgeName": "Winnebachseehütte",
+    "endLodgeName": "Pforzheimer Hütte"
+  },
+  {
+    "tourName": "Sellrainer Hüttenrunde",
+    "tourVariantName": "Alpine",
+    "order": 4,
+    "startLodgeName": "Pforzheimer Hütte",
+    "endLodgeName": "Schweinfurter Hütte"
+  },
+  {
+    "tourName": "Sellrainer Hüttenrunde",
+    "tourVariantName": "Alpine",
+    "order": 5,
+    "startLodgeName": "Schweinfurter Hütte",
+    "endLodgeName": "Dortmunder Hütte"
+  }
+]

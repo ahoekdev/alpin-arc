@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Api.Models;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
@@ -6,143 +7,12 @@ namespace Api.Data;
 
 public static class DemoDataSeeder
 {
-    private const string DefaultVariantName = "Default";
+    private const string SeedDataDirectoryName = "SeedData";
 
-    private static readonly Dictionary<string, LodgeSeed> Lodges = new(StringComparer.Ordinal)
+    private static readonly JsonSerializerOptions JsonOptions = new()
     {
-        ["Berliner Hütte"] = new(
-            "Historic mountain refuge in the Zillertal Alps and a major overnight stop on the Berliner Höhenweg.",
-            "AT"),
-        ["Bremer Hütte"] = new(
-            "High alpine hut in the Stubai Alps serving the western stages of the Stubaier Höhenweg.",
-            "AT"),
-        ["Dortmunder Hütte"] = new(
-            "Road-accessible hut above Kühtai at the eastern end of the Sellrainer Hüttenrunde.",
-            "AT"),
-        ["Dresdner Hütte"] = new(
-            "Stubai Alps hut near the glacier ski area and a central stop on the Stubaier Höhenweg.",
-            "AT"),
-        ["Franz-Senn-Hütte"] = new(
-            "Large alpine hut in the Oberbergtal used as a gateway to Stubai glacier terrain.",
-            "AT"),
-        ["Friesenberghaus"] = new(
-            "Zillertal Alps hut above the Schlegeis reservoir with links toward Olpererhütte and Gamshütte.",
-            "AT"),
-        ["Furtschaglhaus"] = new(
-            "Remote Zillertal Alps hut above the Schlegeis valley on the route toward Berliner Hütte.",
-            "AT"),
-        ["Gamshütte"] = new(
-            "Mountain hut above Finkenberg and a common starting lodge for the Berliner Höhenweg.",
-            "AT"),
-        ["Greizer Hütte"] = new(
-            "Zillertal Alps refuge in the Floitengrund between Berliner Hütte and Kasseler Hütte.",
-            "AT"),
-        ["Innsbrucker Hütte"] = new(
-            "Stubai Alps hut below the Habicht and the southern endpoint of the Stubaier Höhenweg.",
-            "AT"),
-        ["Karl-von-Edel-Hütte"] = new(
-            "Hut above Mayrhofen marking the eastern end of the Berliner Höhenweg.",
-            "AT"),
-        ["Kasseler Hütte"] = new(
-            "Zillertal Alps hut in the Stillup valley on the high route toward Karl-von-Edel-Hütte.",
-            "AT"),
-        ["Neue Regensburger Hütte"] = new(
-            "Quiet Stubai Alps hut above the Falbesoner valley between Franz-Senn-Hütte and Dresdner Hütte.",
-            "AT"),
-        ["Nürnberger Hütte"] = new(
-            "Traditional Stubai Alps hut on the route from Sulzenau Hütte toward Bremer Hütte.",
-            "AT"),
-        ["Olpererhütte"] = new(
-            "Popular Zillertal Alps hut overlooking the Schlegeis reservoir below the Olperer.",
-            "AT"),
-        ["Pforzheimer Hütte"] = new(
-            "Sellrain mountain hut in the Gleirschtal and a key stop on the Sellrainer Hüttenrunde.",
-            "AT"),
-        ["Potsdamer Hütte"] = new(
-            "Sellrain Alps hut above the Fotschertal and a common entry point to the hut circuit.",
-            "AT"),
-        ["Schweinfurter Hütte"] = new(
-            "Sellrain mountain hut in the Zwieselbachtal between Pforzheimer Hütte and Dortmunder Hütte.",
-            "AT"),
-        ["Starkenburger Hütte"] = new(
-            "Stubai Alps hut above Neustift with wide valley views and access to the Stubaier Höhenweg.",
-            "AT"),
-        ["Sulzenau Hütte"] = new(
-            "Stubai Alps hut below the Sulzenauferner and a short stage from Dresdner Hütte.",
-            "AT"),
-        ["Westfalenhaus"] = new(
-            "Sellrain Alps hut in the Längental connecting Potsdamer Hütte with several route variants.",
-            "AT"),
-        ["Winnebachseehütte"] = new(
-            "Alpine hut above the Winnebachsee used by the higher variant of the Sellrainer Hüttenrunde.",
-            "AT")
+        PropertyNameCaseInsensitive = true
     };
-
-    private static readonly TourSeed[] Tours =
-    [
-        new(
-            "Berliner Höhenweg",
-            "A hut-to-hut traverse through the Zillertal Alps linking classic mountain huts on a demanding high route.",
-            [
-                new(
-                    DefaultVariantName,
-                    "The standard hut sequence across the Berliner Höhenweg.",
-                    true,
-                    [
-                        new("Gamshütte", "Friesenberghaus", 540, 14500),
-                        new("Friesenberghaus", "Olpererhütte", 150, 3900),
-                        new("Olpererhütte", "Furtschaglhaus", 240, 9800),
-                        new("Furtschaglhaus", "Berliner Hütte", 390, 11500),
-                        new("Berliner Hütte", "Greizer Hütte", 420, 10000),
-                        new("Greizer Hütte", "Kasseler Hütte", 540, 13000),
-                        new("Kasseler Hütte", "Karl-von-Edel-Hütte", 540, 14000)
-                    ])
-            ]),
-        new(
-            "Stubaier Höhenweg",
-            "A multi-day circuit through the Stubai Alps with sustained hut-to-hut walking and glacier views.",
-            [
-                new(
-                    DefaultVariantName,
-                    "The standard hut sequence across the Stubaier Höhenweg.",
-                    true,
-                    [
-                        new("Starkenburger Hütte", "Franz-Senn-Hütte", 420, 15000),
-                        new("Franz-Senn-Hütte", "Neue Regensburger Hütte", 300, 8500),
-                        new("Neue Regensburger Hütte", "Dresdner Hütte", 420, 12000),
-                        new("Dresdner Hütte", "Sulzenau Hütte", 180, 4500),
-                        new("Sulzenau Hütte", "Nürnberger Hütte", 240, 6000),
-                        new("Nürnberger Hütte", "Bremer Hütte", 360, 7500),
-                        new("Bremer Hütte", "Innsbrucker Hütte", 420, 9000)
-                    ])
-            ]),
-        new(
-            "Sellrainer Hüttenrunde",
-            "A compact hut circuit in the Sellrain mountains connecting high alpine huts above the Sellrain valley.",
-            [
-                new(
-                    "Normal",
-                    "The regular hut-to-hut line from the Potsdamer Hütte across Westfalenhaus and Pforzheimer Hütte to the Dortmunder Hütte.",
-                    true,
-                    [
-                        new("Potsdamer Hütte", "Westfalenhaus", 300, 9000),
-                        new("Westfalenhaus", "Pforzheimer Hütte", 360, 11000),
-                        new("Pforzheimer Hütte", "Schweinfurter Hütte", 240, 9000),
-                        new("Schweinfurter Hütte", "Dortmunder Hütte", 300, 12000)
-                    ]),
-                new(
-                    "Alpine",
-                    "A more alpine variant that links Westfalenhaus to Pforzheimer Hütte via the Winnebachseehütte.",
-                    false,
-                    [
-                        new("Potsdamer Hütte", "Westfalenhaus", 300, 9000),
-                        new("Westfalenhaus", "Winnebachseehütte", 360, 10000),
-                        new("Winnebachseehütte", "Pforzheimer Hütte", 300, 9000),
-                        new("Pforzheimer Hütte", "Schweinfurter Hütte", 240, 9000),
-                        new("Schweinfurter Hütte", "Dortmunder Hütte", 300, 12000)
-                    ])
-            ])
-    ];
 
     public static void Seed(DbContext context, bool _)
     {
@@ -153,9 +23,39 @@ public static class DemoDataSeeder
 
         ReloadPostgresTypes(appContext);
 
-        foreach (var tourSeed in Tours)
+        var seedData = LoadSeedData();
+
+        foreach (var lodgeSeed in seedData.Lodges)
         {
-            SeedTour(appContext, tourSeed);
+            UpsertLodge(appContext, lodgeSeed);
+        }
+
+        appContext.SaveChanges();
+
+        foreach (var stageSeed in seedData.Stages)
+        {
+            UpsertStage(appContext, stageSeed);
+        }
+
+        appContext.SaveChanges();
+
+        foreach (var tourSeed in seedData.Tours)
+        {
+            UpsertTour(appContext, tourSeed);
+        }
+
+        appContext.SaveChanges();
+
+        foreach (var variantSeed in seedData.TourVariants)
+        {
+            UpsertTourVariant(appContext, variantSeed);
+        }
+
+        appContext.SaveChanges();
+
+        foreach (var tourVariantStageSeed in seedData.TourVariantStages)
+        {
+            UpsertTourVariantStage(appContext, tourVariantStageSeed);
         }
 
         appContext.SaveChanges();
@@ -170,9 +70,39 @@ public static class DemoDataSeeder
 
         await ReloadPostgresTypesAsync(appContext, cancellationToken);
 
-        foreach (var tourSeed in Tours)
+        var seedData = LoadSeedData();
+
+        foreach (var lodgeSeed in seedData.Lodges)
         {
-            await SeedTourAsync(appContext, tourSeed, cancellationToken);
+            await UpsertLodgeAsync(appContext, lodgeSeed, cancellationToken);
+        }
+
+        await appContext.SaveChangesAsync(cancellationToken);
+
+        foreach (var stageSeed in seedData.Stages)
+        {
+            await UpsertStageAsync(appContext, stageSeed, cancellationToken);
+        }
+
+        await appContext.SaveChangesAsync(cancellationToken);
+
+        foreach (var tourSeed in seedData.Tours)
+        {
+            await UpsertTourAsync(appContext, tourSeed, cancellationToken);
+        }
+
+        await appContext.SaveChangesAsync(cancellationToken);
+
+        foreach (var variantSeed in seedData.TourVariants)
+        {
+            await UpsertTourVariantAsync(appContext, variantSeed, cancellationToken);
+        }
+
+        await appContext.SaveChangesAsync(cancellationToken);
+
+        foreach (var tourVariantStageSeed in seedData.TourVariantStages)
+        {
+            await UpsertTourVariantStageAsync(appContext, tourVariantStageSeed, cancellationToken);
         }
 
         await appContext.SaveChangesAsync(cancellationToken);
@@ -196,318 +126,364 @@ public static class DemoDataSeeder
         }
     }
 
-    private static void SeedTour(AppDbContext context, TourSeed tourSeed)
+    private static void UpsertLodge(AppDbContext context, LodgeSeed seed)
     {
-        var tour = context.Tours
-            .Include(t => t.Variants)
-            .SingleOrDefault(t => t.Name == tourSeed.Name);
+        var lodge = context.Lodges.SingleOrDefault(l => l.Name == seed.Name);
 
-        if (tour is null)
+        if (lodge is null)
         {
-            tour = new Tour { Name = tourSeed.Name, Description = tourSeed.Description };
-            context.Tours.Add(tour);
-            context.SaveChanges();
-        }
-        else if (tour.Description != tourSeed.Description)
-        {
-            tour.Description = tourSeed.Description;
-            context.SaveChanges();
-        }
-
-        foreach (var variantSeed in tourSeed.Variants)
-        {
-            SeedTourVariant(context, tour, variantSeed);
-        }
-    }
-
-    private static void SeedTourVariant(
-        AppDbContext context,
-        Tour tour,
-        TourVariantSeed variantSeed)
-    {
-        var variant = context.TourVariants
-            .SingleOrDefault(v => v.TourId == tour.Id && v.Name == variantSeed.Name);
-
-        if (variant is null)
-        {
-            variant = new TourVariant
+            context.Lodges.Add(new Lodge
             {
-                TourId = tour.Id,
-                Name = variantSeed.Name,
-                Description = variantSeed.Description,
-                IsPrimary = variantSeed.IsPrimary
-            };
-            context.TourVariants.Add(variant);
-            context.SaveChanges();
-        }
-        else if (variant.Description != variantSeed.Description || variant.IsPrimary != variantSeed.IsPrimary)
-        {
-            variant.Description = variantSeed.Description;
-            variant.IsPrimary = variantSeed.IsPrimary;
-            context.SaveChanges();
+                Name = seed.Name,
+                Description = seed.Description,
+                CountryCode = seed.CountryCode
+            });
+            return;
         }
 
-        SeedStages(context, variant, variantSeed.Stages);
+        lodge.Description = seed.Description;
+        lodge.CountryCode = seed.CountryCode;
     }
 
-    private static async Task SeedTourAsync(
+    private static async Task UpsertLodgeAsync(
         AppDbContext context,
-        TourSeed tourSeed,
+        LodgeSeed seed,
         CancellationToken cancellationToken)
     {
-        var tour = await context.Tours
-            .Include(t => t.Variants)
-            .SingleOrDefaultAsync(t => t.Name == tourSeed.Name, cancellationToken);
+        var lodge = await context.Lodges.SingleOrDefaultAsync(l => l.Name == seed.Name, cancellationToken);
 
-        if (tour is null)
+        if (lodge is null)
         {
-            tour = new Tour { Name = tourSeed.Name, Description = tourSeed.Description };
-            context.Tours.Add(tour);
-            await context.SaveChangesAsync(cancellationToken);
-        }
-        else if (tour.Description != tourSeed.Description)
-        {
-            tour.Description = tourSeed.Description;
-            await context.SaveChangesAsync(cancellationToken);
+            context.Lodges.Add(new Lodge
+            {
+                Name = seed.Name,
+                Description = seed.Description,
+                CountryCode = seed.CountryCode
+            });
+            return;
         }
 
-        foreach (var variantSeed in tourSeed.Variants)
-        {
-            await SeedTourVariantAsync(context, tour, variantSeed, cancellationToken);
-        }
+        lodge.Description = seed.Description;
+        lodge.CountryCode = seed.CountryCode;
     }
 
-    private static async Task SeedTourVariantAsync(
-        AppDbContext context,
-        Tour tour,
-        TourVariantSeed variantSeed,
-        CancellationToken cancellationToken)
+    private static void UpsertStage(AppDbContext context, StageSeed seed)
     {
-        var variant = await context.TourVariants
-            .SingleOrDefaultAsync(
-                v => v.TourId == tour.Id && v.Name == variantSeed.Name,
-                cancellationToken);
-
-        if (variant is null)
-        {
-            variant = new TourVariant
-            {
-                TourId = tour.Id,
-                Name = variantSeed.Name,
-                Description = variantSeed.Description,
-                IsPrimary = variantSeed.IsPrimary
-            };
-            context.TourVariants.Add(variant);
-            await context.SaveChangesAsync(cancellationToken);
-        }
-        else if (variant.Description != variantSeed.Description || variant.IsPrimary != variantSeed.IsPrimary)
-        {
-            variant.Description = variantSeed.Description;
-            variant.IsPrimary = variantSeed.IsPrimary;
-            await context.SaveChangesAsync(cancellationToken);
-        }
-
-        await SeedStagesAsync(context, variant, variantSeed.Stages, cancellationToken);
-    }
-
-    private static void SeedStages(
-        AppDbContext context,
-        TourVariant variant,
-        IReadOnlyList<StageSeed> stageSeeds)
-    {
-        for (var index = 0; index < stageSeeds.Count; index++)
-        {
-            var stageSeed = stageSeeds[index];
-            var stage = GetOrCreateStage(context, stageSeed);
-            var order = index + 1;
-
-            var tourVariantStage = context.TourVariantStages
-                .SingleOrDefault(vs => vs.TourVariantId == variant.Id && vs.Order == order);
-
-            if (tourVariantStage is null)
-            {
-                context.TourVariantStages.Add(new TourVariantStage
-                {
-                    TourVariantId = variant.Id,
-                    StageId = stage.Id,
-                    Order = order
-                });
-            }
-            else if (tourVariantStage.StageId != stage.Id)
-            {
-                tourVariantStage.StageId = stage.Id;
-            }
-        }
-    }
-
-    private static async Task SeedStagesAsync(
-        AppDbContext context,
-        TourVariant variant,
-        IReadOnlyList<StageSeed> stageSeeds,
-        CancellationToken cancellationToken)
-    {
-        for (var index = 0; index < stageSeeds.Count; index++)
-        {
-            var stageSeed = stageSeeds[index];
-            var stage = await GetOrCreateStageAsync(context, stageSeed, cancellationToken);
-            var order = index + 1;
-
-            var tourVariantStage = await context.TourVariantStages.SingleOrDefaultAsync(
-                    vs => vs.TourVariantId == variant.Id && vs.Order == order,
-                    cancellationToken);
-
-            if (tourVariantStage is null)
-            {
-                context.TourVariantStages.Add(new TourVariantStage
-                {
-                    TourVariantId = variant.Id,
-                    StageId = stage.Id,
-                    Order = order
-                });
-            }
-            else if (tourVariantStage.StageId != stage.Id)
-            {
-                tourVariantStage.StageId = stage.Id;
-            }
-        }
-    }
-
-    private static Stage GetOrCreateStage(AppDbContext context, StageSeed stageSeed)
-    {
-        var startLodge = GetOrCreateLodge(context, stageSeed.StartLodgeName);
-        var endLodge = GetOrCreateLodge(context, stageSeed.EndLodgeName);
-
+        var startLodge = GetRequiredLodge(context, seed.StartLodgeName);
+        var endLodge = GetRequiredLodge(context, seed.EndLodgeName);
         var stage = context.Stages.SingleOrDefault(
             s => s.StartLodgeId == startLodge.Id && s.EndLodgeId == endLodge.Id);
 
-        if (stage is not null)
+        if (stage is null)
         {
-            return stage;
+            context.Stages.Add(new Stage
+            {
+                StartLodgeId = startLodge.Id,
+                EndLodgeId = endLodge.Id,
+                DurationMinutes = seed.DurationMinutes,
+                DistanceMeters = seed.DistanceMeters
+            });
+            return;
         }
 
-        stage = new Stage
-        {
-            StartLodgeId = startLodge.Id,
-            EndLodgeId = endLodge.Id,
-            DurationMinutes = stageSeed.DurationMinutes,
-            DistanceMeters = stageSeed.DistanceMeters
-        };
-
-        context.Stages.Add(stage);
-        context.SaveChanges();
-
-        return stage;
+        stage.DurationMinutes = seed.DurationMinutes;
+        stage.DistanceMeters = seed.DistanceMeters;
     }
 
-    private static async Task<Stage> GetOrCreateStageAsync(
+    private static async Task UpsertStageAsync(
         AppDbContext context,
-        StageSeed stageSeed,
+        StageSeed seed,
         CancellationToken cancellationToken)
     {
-        var startLodge = await GetOrCreateLodgeAsync(context, stageSeed.StartLodgeName, cancellationToken);
-        var endLodge = await GetOrCreateLodgeAsync(context, stageSeed.EndLodgeName, cancellationToken);
-
+        var startLodge = await GetRequiredLodgeAsync(context, seed.StartLodgeName, cancellationToken);
+        var endLodge = await GetRequiredLodgeAsync(context, seed.EndLodgeName, cancellationToken);
         var stage = await context.Stages.SingleOrDefaultAsync(
             s => s.StartLodgeId == startLodge.Id && s.EndLodgeId == endLodge.Id,
             cancellationToken);
 
-        if (stage is not null)
+        if (stage is null)
         {
-            return stage;
-        }
-
-        stage = new Stage
-        {
-            StartLodgeId = startLodge.Id,
-            EndLodgeId = endLodge.Id,
-            DurationMinutes = stageSeed.DurationMinutes,
-            DistanceMeters = stageSeed.DistanceMeters
-        };
-
-        context.Stages.Add(stage);
-        await context.SaveChangesAsync(cancellationToken);
-
-        return stage;
-    }
-
-    private static Lodge GetOrCreateLodge(AppDbContext context, string name)
-    {
-        var lodge = context.Lodges.SingleOrDefault(l => l.Name == name);
-        var seed = GetLodgeSeed(name);
-
-        if (lodge is not null)
-        {
-            if (lodge.Description != seed.Description || lodge.CountryCode != seed.CountryCode)
+            context.Stages.Add(new Stage
             {
-                lodge.Description = seed.Description;
-                lodge.CountryCode = seed.CountryCode;
-                context.SaveChanges();
-            }
-
-            return lodge;
+                StartLodgeId = startLodge.Id,
+                EndLodgeId = endLodge.Id,
+                DurationMinutes = seed.DurationMinutes,
+                DistanceMeters = seed.DistanceMeters
+            });
+            return;
         }
 
-        lodge = new Lodge
-        {
-            Name = name,
-            Description = seed.Description,
-            CountryCode = seed.CountryCode
-        };
-        context.Lodges.Add(lodge);
-        context.SaveChanges();
-
-        return lodge;
+        stage.DurationMinutes = seed.DurationMinutes;
+        stage.DistanceMeters = seed.DistanceMeters;
     }
 
-    private static async Task<Lodge> GetOrCreateLodgeAsync(
+    private static void UpsertTour(AppDbContext context, TourSeed seed)
+    {
+        var tour = context.Tours.SingleOrDefault(t => t.Name == seed.Name);
+
+        if (tour is null)
+        {
+            context.Tours.Add(new Tour
+            {
+                Name = seed.Name,
+                Description = seed.Description
+            });
+            return;
+        }
+
+        tour.Description = seed.Description;
+    }
+
+    private static async Task UpsertTourAsync(
+        AppDbContext context,
+        TourSeed seed,
+        CancellationToken cancellationToken)
+    {
+        var tour = await context.Tours.SingleOrDefaultAsync(t => t.Name == seed.Name, cancellationToken);
+
+        if (tour is null)
+        {
+            context.Tours.Add(new Tour
+            {
+                Name = seed.Name,
+                Description = seed.Description
+            });
+            return;
+        }
+
+        tour.Description = seed.Description;
+    }
+
+    private static void UpsertTourVariant(AppDbContext context, TourVariantSeed seed)
+    {
+        var tour = GetRequiredTour(context, seed.TourName);
+        var variant = context.TourVariants.SingleOrDefault(
+            v => v.TourId == tour.Id && v.Name == seed.Name);
+
+        if (variant is null)
+        {
+            context.TourVariants.Add(new TourVariant
+            {
+                TourId = tour.Id,
+                Name = seed.Name,
+                Description = seed.Description,
+                IsPrimary = seed.IsPrimary
+            });
+            return;
+        }
+
+        variant.Description = seed.Description;
+        variant.IsPrimary = seed.IsPrimary;
+    }
+
+    private static async Task UpsertTourVariantAsync(
+        AppDbContext context,
+        TourVariantSeed seed,
+        CancellationToken cancellationToken)
+    {
+        var tour = await GetRequiredTourAsync(context, seed.TourName, cancellationToken);
+        var variant = await context.TourVariants.SingleOrDefaultAsync(
+            v => v.TourId == tour.Id && v.Name == seed.Name,
+            cancellationToken);
+
+        if (variant is null)
+        {
+            context.TourVariants.Add(new TourVariant
+            {
+                TourId = tour.Id,
+                Name = seed.Name,
+                Description = seed.Description,
+                IsPrimary = seed.IsPrimary
+            });
+            return;
+        }
+
+        variant.Description = seed.Description;
+        variant.IsPrimary = seed.IsPrimary;
+    }
+
+    private static void UpsertTourVariantStage(AppDbContext context, TourVariantStageSeed seed)
+    {
+        var tour = GetRequiredTour(context, seed.TourName);
+        var variant = GetRequiredTourVariant(context, tour.Id, seed.TourVariantName);
+        var stage = GetRequiredStage(context, seed.StartLodgeName, seed.EndLodgeName);
+        var tourVariantStage = context.TourVariantStages.SingleOrDefault(
+            vs => vs.TourVariantId == variant.Id && vs.Order == seed.Order);
+
+        if (tourVariantStage is null)
+        {
+            context.TourVariantStages.Add(new TourVariantStage
+            {
+                TourVariantId = variant.Id,
+                StageId = stage.Id,
+                Order = seed.Order
+            });
+            return;
+        }
+
+        tourVariantStage.StageId = stage.Id;
+    }
+
+    private static async Task UpsertTourVariantStageAsync(
+        AppDbContext context,
+        TourVariantStageSeed seed,
+        CancellationToken cancellationToken)
+    {
+        var tour = await GetRequiredTourAsync(context, seed.TourName, cancellationToken);
+        var variant = await GetRequiredTourVariantAsync(
+            context,
+            tour.Id,
+            seed.TourVariantName,
+            cancellationToken);
+        var stage = await GetRequiredStageAsync(
+            context,
+            seed.StartLodgeName,
+            seed.EndLodgeName,
+            cancellationToken);
+        var tourVariantStage = await context.TourVariantStages.SingleOrDefaultAsync(
+            vs => vs.TourVariantId == variant.Id && vs.Order == seed.Order,
+            cancellationToken);
+
+        if (tourVariantStage is null)
+        {
+            context.TourVariantStages.Add(new TourVariantStage
+            {
+                TourVariantId = variant.Id,
+                StageId = stage.Id,
+                Order = seed.Order
+            });
+            return;
+        }
+
+        tourVariantStage.StageId = stage.Id;
+    }
+
+    private static Lodge GetRequiredLodge(AppDbContext context, string name)
+    {
+        return context.Lodges.SingleOrDefault(l => l.Name == name)
+            ?? throw new InvalidOperationException($"Seed data references an unknown lodge: {name}.");
+    }
+
+    private static async Task<Lodge> GetRequiredLodgeAsync(
         AppDbContext context,
         string name,
         CancellationToken cancellationToken)
     {
-        var lodge = await context.Lodges.SingleOrDefaultAsync(l => l.Name == name, cancellationToken);
-        var seed = GetLodgeSeed(name);
+        return await context.Lodges.SingleOrDefaultAsync(l => l.Name == name, cancellationToken)
+            ?? throw new InvalidOperationException($"Seed data references an unknown lodge: {name}.");
+    }
 
-        if (lodge is not null)
+    private static Tour GetRequiredTour(AppDbContext context, string name)
+    {
+        return context.Tours.SingleOrDefault(t => t.Name == name)
+            ?? throw new InvalidOperationException($"Seed data references an unknown tour: {name}.");
+    }
+
+    private static async Task<Tour> GetRequiredTourAsync(
+        AppDbContext context,
+        string name,
+        CancellationToken cancellationToken)
+    {
+        return await context.Tours.SingleOrDefaultAsync(t => t.Name == name, cancellationToken)
+            ?? throw new InvalidOperationException($"Seed data references an unknown tour: {name}.");
+    }
+
+    private static TourVariant GetRequiredTourVariant(AppDbContext context, long tourId, string name)
+    {
+        return context.TourVariants.SingleOrDefault(v => v.TourId == tourId && v.Name == name)
+            ?? throw new InvalidOperationException($"Seed data references an unknown tour variant: {name}.");
+    }
+
+    private static async Task<TourVariant> GetRequiredTourVariantAsync(
+        AppDbContext context,
+        long tourId,
+        string name,
+        CancellationToken cancellationToken)
+    {
+        return await context.TourVariants.SingleOrDefaultAsync(
+                v => v.TourId == tourId && v.Name == name,
+                cancellationToken)
+            ?? throw new InvalidOperationException($"Seed data references an unknown tour variant: {name}.");
+    }
+
+    private static Stage GetRequiredStage(AppDbContext context, string startLodgeName, string endLodgeName)
+    {
+        var startLodge = GetRequiredLodge(context, startLodgeName);
+        var endLodge = GetRequiredLodge(context, endLodgeName);
+
+        return context.Stages.SingleOrDefault(
+                s => s.StartLodgeId == startLodge.Id && s.EndLodgeId == endLodge.Id)
+            ?? throw new InvalidOperationException(
+                $"Seed data references an unknown stage: {startLodgeName} to {endLodgeName}.");
+    }
+
+    private static async Task<Stage> GetRequiredStageAsync(
+        AppDbContext context,
+        string startLodgeName,
+        string endLodgeName,
+        CancellationToken cancellationToken)
+    {
+        var startLodge = await GetRequiredLodgeAsync(context, startLodgeName, cancellationToken);
+        var endLodge = await GetRequiredLodgeAsync(context, endLodgeName, cancellationToken);
+
+        return await context.Stages.SingleOrDefaultAsync(
+                s => s.StartLodgeId == startLodge.Id && s.EndLodgeId == endLodge.Id,
+                cancellationToken)
+            ?? throw new InvalidOperationException(
+                $"Seed data references an unknown stage: {startLodgeName} to {endLodgeName}.");
+    }
+
+    private static SeedData LoadSeedData()
+    {
+        var seedDataPath = ResolveSeedDataPath();
+
+        return new SeedData(
+            LoadSeedFile<LodgeSeed>(seedDataPath, "lodges.json"),
+            LoadSeedFile<StageSeed>(seedDataPath, "stages.json"),
+            LoadSeedFile<TourSeed>(seedDataPath, "tours.json"),
+            LoadSeedFile<TourVariantSeed>(seedDataPath, "tourVariants.json"),
+            LoadSeedFile<TourVariantStageSeed>(seedDataPath, "tourVariantStages.json"));
+    }
+
+    private static IReadOnlyList<T> LoadSeedFile<T>(string seedDataPath, string fileName)
+    {
+        var path = Path.Combine(seedDataPath, fileName);
+        var json = File.ReadAllText(path);
+
+        return JsonSerializer.Deserialize<IReadOnlyList<T>>(json, JsonOptions)
+            ?? throw new InvalidOperationException($"Seed data file is empty: {path}.");
+    }
+
+    private static string ResolveSeedDataPath()
+    {
+        var directory = new DirectoryInfo(AppContext.BaseDirectory);
+
+        while (directory is not null)
         {
-            if (lodge.Description != seed.Description || lodge.CountryCode != seed.CountryCode)
+            var seedDataPath = Path.Combine(directory.FullName, "Data", SeedDataDirectoryName);
+
+            if (Directory.Exists(seedDataPath))
             {
-                lodge.Description = seed.Description;
-                lodge.CountryCode = seed.CountryCode;
-                await context.SaveChangesAsync(cancellationToken);
+                return seedDataPath;
             }
 
-            return lodge;
+            directory = directory.Parent;
         }
 
-        lodge = new Lodge
-        {
-            Name = name,
-            Description = seed.Description,
-            CountryCode = seed.CountryCode
-        };
-        context.Lodges.Add(lodge);
-        await context.SaveChangesAsync(cancellationToken);
-
-        return lodge;
+        throw new DirectoryNotFoundException($"Could not find Data/{SeedDataDirectoryName} for demo seed data.");
     }
 
-    private static LodgeSeed GetLodgeSeed(string name)
-    {
-        return Lodges.TryGetValue(name, out var seed)
-            ? seed
-            : new LodgeSeed($"Mountain lodge on an Alpine hut-to-hut route: {name}.", "AT");
-    }
+    private sealed record SeedData(
+        IReadOnlyList<LodgeSeed> Lodges,
+        IReadOnlyList<StageSeed> Stages,
+        IReadOnlyList<TourSeed> Tours,
+        IReadOnlyList<TourVariantSeed> TourVariants,
+        IReadOnlyList<TourVariantStageSeed> TourVariantStages);
 
-    private sealed record TourSeed(
+    private sealed record LodgeSeed(
         string Name,
         string Description,
-        IReadOnlyList<TourVariantSeed> Variants);
-
-    private sealed record TourVariantSeed(
-        string Name,
-        string Description,
-        bool IsPrimary,
-        IReadOnlyList<StageSeed> Stages);
+        string CountryCode);
 
     private sealed record StageSeed(
         string StartLodgeName,
@@ -515,5 +491,20 @@ public static class DemoDataSeeder
         int DurationMinutes,
         int DistanceMeters);
 
-    private sealed record LodgeSeed(string Description, string CountryCode);
+    private sealed record TourSeed(
+        string Name,
+        string Description);
+
+    private sealed record TourVariantSeed(
+        string TourName,
+        string Name,
+        string Description,
+        bool IsPrimary);
+
+    private sealed record TourVariantStageSeed(
+        string TourName,
+        string TourVariantName,
+        int Order,
+        string StartLodgeName,
+        string EndLodgeName);
 }

@@ -1,0 +1,26 @@
+[
+  {
+    "tourName": "Berliner Höhenweg",
+    "name": "Default",
+    "description": "The standard hut sequence across the Berliner Höhenweg.",
+    "isPrimary": true
+  },
+  {
+    "tourName": "Stubaier Höhenweg",
+    "name": "Default",
+    "description": "The standard hut sequence across the Stubaier Höhenweg.",
+    "isPrimary": true
+  },
+  {
+    "tourName": "Sellrainer Hüttenrunde",
+    "name": "Normal",
+    "description": "The regular hut-to-hut line from the Potsdamer Hütte across Westfalenhaus and Pforzheimer Hütte to the Dortmunder Hütte.",
+    "isPrimary": true
+  },
+  {
+    "tourName": "Sellrainer Hüttenrunde",
+    "name": "Alpine",
+    "description": "A more alpine variant that links Westfalenhaus to Pforzheimer Hütte via the Winnebachseehütte.",
+    "isPrimary": false
+  }
+]

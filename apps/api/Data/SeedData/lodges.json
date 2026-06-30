@@ -1,0 +1,112 @@
+[
+  {
+    "name": "Berliner Hütte",
+    "description": "Historic mountain refuge in the Zillertal Alps and a major overnight stop on the Berliner Höhenweg.",
+    "countryCode": "AT"
+  },
+  {
+    "name": "Bremer Hütte",
+    "description": "High alpine hut in the Stubai Alps serving the western stages of the Stubaier Höhenweg.",
+    "countryCode": "AT"
+  },
+  {
+    "name": "Dortmunder Hütte",
+    "description": "Road-accessible hut above Kühtai at the eastern end of the Sellrainer Hüttenrunde.",
+    "countryCode": "AT"
+  },
+  {
+    "name": "Dresdner Hütte",
+    "description": "Stubai Alps hut near the glacier ski area and a central stop on the Stubaier Höhenweg.",
+    "countryCode": "AT"
+  },
+  {
+    "name": "Franz-Senn-Hütte",
+    "description": "Large alpine hut in the Oberbergtal used as a gateway to Stubai glacier terrain.",
+    "countryCode": "AT"
+  },
+  {
+    "name": "Friesenberghaus",
+    "description": "Zillertal Alps hut above the Schlegeis reservoir with links toward Olpererhütte and Gamshütte.",
+    "countryCode": "AT"
+  },
+  {
+    "name": "Furtschaglhaus",
+    "description": "Remote Zillertal Alps hut above the Schlegeis valley on the route toward Berliner Hütte.",
+    "countryCode": "AT"
+  },
+  {
+    "name": "Gamshütte",
+    "description": "Mountain hut above Finkenberg and a common starting lodge for the Berliner Höhenweg.",
+    "countryCode": "AT"
+  },
+  {
+    "name": "Greizer Hütte",
+    "description": "Zillertal Alps refuge in the Floitengrund between Berliner Hütte and Kasseler Hütte.",
+    "countryCode": "AT"
+  },
+  {
+    "name": "Innsbrucker Hütte",
+    "description": "Stubai Alps hut below the Habicht and the southern endpoint of the Stubaier Höhenweg.",
+    "countryCode": "AT"
+  },
+  {
+    "name": "Karl-von-Edel-Hütte",
+    "description": "Hut above Mayrhofen marking the eastern end of the Berliner Höhenweg.",
+    "countryCode": "AT"
+  },
+  {
+    "name": "Kasseler Hütte",
+    "description": "Zillertal Alps hut in the Stillup valley on the high route toward Karl-von-Edel-Hütte.",
+    "countryCode": "AT"
+  },
+  {
+    "name": "Neue Regensburger Hütte",
+    "description": "Quiet Stubai Alps hut above the Falbesoner valley between Franz-Senn-Hütte and Dresdner Hütte.",
+    "countryCode": "AT"
+  },
+  {
+    "name": "Nürnberger Hütte",
+    "description": "Traditional Stubai Alps hut on the route from Sulzenau Hütte toward Bremer Hütte.",
+    "countryCode": "AT"
+  },
+  {
+    "name": "Olpererhütte",
+    "description": "Popular Zillertal Alps hut overlooking the Schlegeis reservoir below the Olperer.",
+    "countryCode": "AT"
+  },
+  {
+    "name": "Pforzheimer Hütte",
+    "description": "Sellrain mountain hut in the Gleirschtal and a key stop on the Sellrainer Hüttenrunde.",
+    "countryCode": "AT"
+  },
+  {
+    "name": "Potsdamer Hütte",
+    "description": "Sellrain Alps hut above the Fotschertal and a common entry point to the hut circuit.",
+    "countryCode": "AT"
+  },
+  {
+    "name": "Schweinfurter Hütte",
+    "description": "Sellrain mountain hut in the Zwieselbachtal between Pforzheimer Hütte and Dortmunder Hütte.",
+    "countryCode": "AT"
+  },
+  {
+    "name": "Starkenburger Hütte",
+    "description": "Stubai Alps hut above Neustift with wide valley views and access to the Stubaier Höhenweg.",
+    "countryCode": "AT"
+  },
+  {
+    "name": "Sulzenau Hütte",
+    "description": "Stubai Alps hut below the Sulzenauferner and a short stage from Dresdner Hütte.",
+    "countryCode": "AT"
+  },
+  {
+    "name": "Westfalenhaus",
+    "description": "Sellrain Alps hut in the Längental connecting Potsdamer Hütte with several route variants.",
+    "countryCode": "AT"
+  },
+  {
+    "name": "Winnebachseehütte",
+    "description": "Alpine hut above the Winnebachsee used by the higher variant of the Sellrainer Hüttenrunde.",
+    "countryCode": "AT"
+  }
+]
