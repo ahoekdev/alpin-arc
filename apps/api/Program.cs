@@ -9,6 +9,9 @@ var builder = WebApplication.CreateBuilder(args);
 var seedDemoData = builder.Environment.IsDevelopment();
 
 builder.Services.AddControllers();
+builder.Services.Configure<EmailOptions>(builder.Configuration.GetSection("Email"));
+builder.Services.AddScoped<IEmailSender, SmtpEmailSender>();
+builder.Services.AddScoped<IAuthEmailService, AuthEmailService>();
 builder.Services
     .AddIdentity<ApplicationUser, IdentityRole>(options =>
     {
