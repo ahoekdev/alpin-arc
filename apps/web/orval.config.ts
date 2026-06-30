@@ -24,18 +24,12 @@ export default defineConfig({
       },
       client: "fetch",
       mode: "tags-split",
-      baseUrl: {
-        runtime: "getApiBaseUrl()",
-        imports: [
-          {
-            name: "getApiBaseUrl",
-            default: true,
-            importPath: "../../../utils/getApiBaseUrl",
-          },
-        ],
-      },
       override: {
         useTypeOverInterfaces: true,
+        mutator: {
+          path: "./lib/api/apiFetch.ts",
+          name: "apiFetch",
+        },
       },
     },
   },
