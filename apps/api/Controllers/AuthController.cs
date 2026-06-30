@@ -51,7 +51,7 @@ public sealed class AuthController(
 
     [HttpPost("register", Name = "register")]
     [AllowAnonymous]
-    [ValidateAntiForgeryToken]
+    [RequireAntiforgeryToken]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Register(RegisterRequestDto request, CancellationToken cancellationToken)
@@ -88,7 +88,7 @@ public sealed class AuthController(
 
     [HttpPost("login", Name = "login")]
     [AllowAnonymous]
-    [ValidateAntiForgeryToken]
+    [RequireAntiforgeryToken]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> Login(LoginRequestDto request)
@@ -106,7 +106,7 @@ public sealed class AuthController(
 
     [HttpPost("logout", Name = "logout")]
     [Authorize]
-    [ValidateAntiForgeryToken]
+    [RequireAntiforgeryToken]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> Logout()
     {
@@ -116,7 +116,7 @@ public sealed class AuthController(
 
     [HttpPost("confirm-email", Name = "confirmEmail")]
     [AllowAnonymous]
-    [ValidateAntiForgeryToken]
+    [RequireAntiforgeryToken]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> ConfirmEmail(ConfirmEmailRequestDto request)
@@ -135,7 +135,7 @@ public sealed class AuthController(
 
     [HttpPost("forgot-password", Name = "forgotPassword")]
     [AllowAnonymous]
-    [ValidateAntiForgeryToken]
+    [RequireAntiforgeryToken]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> ForgotPassword(ForgotPasswordRequestDto request, CancellationToken cancellationToken)
     {

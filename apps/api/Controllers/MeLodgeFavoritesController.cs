@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using Api.Dtos;
 using Api.Services;
+using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -31,7 +32,7 @@ public sealed class MeLodgeFavoritesController(ILodgeFavoriteService lodgeFavori
     }
 
     [HttpPost("{lodgeId}", Name = "addMyLodgeFavorite")]
-    [ValidateAntiForgeryToken]
+    [RequireAntiforgeryToken]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> AddFavorite(long lodgeId, CancellationToken cancellationToken)
@@ -41,7 +42,7 @@ public sealed class MeLodgeFavoritesController(ILodgeFavoriteService lodgeFavori
     }
 
     [HttpDelete("{lodgeId}", Name = "removeMyLodgeFavorite")]
-    [ValidateAntiForgeryToken]
+    [RequireAntiforgeryToken]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> RemoveFavorite(long lodgeId, CancellationToken cancellationToken)
     {
