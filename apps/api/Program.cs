@@ -12,6 +12,7 @@ builder.Services.AddControllers();
 builder.Services.Configure<EmailOptions>(builder.Configuration.GetSection("Email"));
 builder.Services.AddScoped<IEmailSender, SmtpEmailSender>();
 builder.Services.AddScoped<IAuthEmailService, AuthEmailService>();
+builder.Services.AddScoped<ILodgeFavoriteService, LodgeFavoriteService>();
 builder.Services
     .AddIdentity<ApplicationUser, IdentityRole>(options =>
     {
