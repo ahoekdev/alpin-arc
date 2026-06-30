@@ -1,0 +1,82 @@
+@api_HostAddress = http://localhost:5111
+@email = user@example.com
+@password = Passw0rd!
+
+###
+
+GET {{api_HostAddress}}/api/auth/csrf
+
+###
+
+POST {{api_HostAddress}}/api/auth/register
+Content-Type: application/json
+X-XSRF-TOKEN: paste-token-from-XSRF-TOKEN-cookie
+
+{
+  "email": "{{email}}",
+  "password": "{{password}}"
+}
+
+###
+
+POST {{api_HostAddress}}/api/auth/login
+Content-Type: application/json
+X-XSRF-TOKEN: paste-token-from-XSRF-TOKEN-cookie
+
+{
+  "email": "{{email}}",
+  "password": "{{password}}",
+  "rememberMe": true
+}
+
+###
+
+GET {{api_HostAddress}}/api/auth/me
+
+###
+
+POST {{api_HostAddress}}/api/auth/confirm-email
+Content-Type: application/json
+X-XSRF-TOKEN: paste-token-from-XSRF-TOKEN-cookie
+
+{
+  "userId": "paste-user-id",
+  "code": "paste-token-from-email"
+}
+
+###
+
+POST {{api_HostAddress}}/api/auth/forgot-password
+Content-Type: application/json
+X-XSRF-TOKEN: paste-token-from-XSRF-TOKEN-cookie
+
+{
+  "email": "{{email}}"
+}
+
+###
+
+POST {{api_HostAddress}}/api/auth/reset-password
+Content-Type: application/json
+X-XSRF-TOKEN: paste-token-from-XSRF-TOKEN-cookie
+
+{
+  "email": "{{email}}",
+  "code": "paste-token-from-email",
+  "password": "{{password}}"
+}
+
+###
+
+POST {{api_HostAddress}}/api/auth/resend-confirmation
+Content-Type: application/json
+X-XSRF-TOKEN: paste-token-from-XSRF-TOKEN-cookie
+
+{
+  "email": "{{email}}"
+}
+
+###
+
+POST {{api_HostAddress}}/api/auth/logout
+X-XSRF-TOKEN: paste-token-from-XSRF-TOKEN-cookie
